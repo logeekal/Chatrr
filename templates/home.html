@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+	<head><title>Welcome to Chatrr</title></head>
+	<body>
+	<div class = "login" action="" method=post>
+		<div class = "yourformdiv">
+		<a href="{{ url_for('home') }}"> Hey </a>
+			<form class="yourform" method=post action="{{ url_for('home') }}">
+			<input type=text name="loginname"><br>
+			<!--<input type = text name="age">		<br> -->
+			<input type = radio name ="male">Male <br>
+			<input type = radio name ="female">Female <br>
+		</div>
+		<div class="lfformdiv">		
+			<h1>Looking For? </h1>
+			<input type=checkbox name="lfmale" value="male"> Male 
+			<input type=checkbox name="lffemale" value="female"> Female <br>
+			
+		</div>
+			<input type = submit name="submit" value="Start Chatting!">
+			</form>
+		{% if error %}	
+		{{error}}
+		{% endif %}
+	</body>
+</html>
