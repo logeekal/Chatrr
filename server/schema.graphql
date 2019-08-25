@@ -1,0 +1,83 @@
+type Query {
+    userList: [User]
+    user(username: String!): User
+    rooms: [Room]
+    room(name: String!): Room
+    me: User
+    ip: String!
+}
+
+type User {
+    id: ID!
+    userName: String!
+    avatar: String!
+    loggedIn: Boolean!
+    createdAt: String!
+    updatedAt: String!
+}
+
+"*****************************"
+
+enum RoomType {
+    STANDARD
+    CUSTOM
+}
+
+""" Rooms are kind of groups where anyone can enter and chat each other \
+ personally and collaboratively."""
+type Room {
+    id: ID!
+    name: String!
+    label: String!
+    type: RoomType!
+    description: String
+    active: Boolean
+    createdAt: String
+    updateAt: String
+    members: [User]
+}
+
+
+type conversation {
+    id: ID!  
+    type: String
+    members: [User]!
+}
+
+
+type Mutation {
+    # if false, someone with same userName is already loggedin
+    loginUser(userName: String!): LoginResponse!
+
+    """
+    Need to update the username to something else on Logout...
+    So that another user can login with same username.
+    """    
+    logoutUser(userName: String!): LogoutResponse!
+
+    """
+    When a user first time joins a room. There is not way to exit all t
+    the rooms, rather, a person can do change the room.
+    
+    Rooms are kind of groups where anyone can enter and chat each other \
+    personally and collaboratively."
+    """
+    joinRoom(userName: String!, roomId: String!): JoinRoomResponse!
+
+}
+
+type LogoutResponse {
+    success: Boolean!
+    error: String
+}
+
+type LoginResponse {
+    success: Boolean!
+    error: String
+}
+
+type JoinRoomResponse{
+    success: Boolean!
+    error: String
+    room: Room
+}

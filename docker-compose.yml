@@ -1,0 +1,22 @@
+version:  '3'
+
+services:
+  safechatdb:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: S@f3 Ch@t Adm1n
+      POSTGRES_USER: SAFE_CHAT_ADMIN
+      POSTGRES_DB: SAFE_CHAT
+    volumes:
+      - pgData:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  dbexplorer:
+    image:  adminer
+    restart: unless-stopped
+    ports:
+      - 3002:8080
+
+volumes:
+  pgData:
