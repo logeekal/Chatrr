@@ -1,24 +1,29 @@
-import express = require('express');
-import cors = require('cors');
+const  express = require('express');
+const cors = require('cors');
 const socket= require('socket.io');
 const http =  require('http')
 
+const { UserAPI } = require('./gql/datasources/users')
+
 const  {importSchema} = require('graphql-import');
 const { ApolloServer, gql } = require('apollo-server-express');
-
-// const {makeExecutableSchema} = require('graph')
-
+const resolvers = require('./gql/resolvers');
 
 const typeDefs = importSchema('./schema.graphql');
-// const typeDefs = gql`
+const store = require('./db');
 
-// `
+console.log(store);
+const app  = express();
 
-const app:   express.Application = express();
+const gqlServer  = new ApolloServer({ 
+    typeDefs,
+    resolvers,
+    dataSources: () => ({
+        userAPI: new UserAPI({ store })
+    })
+});
 
-const gqlServer  = new ApolloServer({ typeDefs });
-
-gqlServer.applyMiddleware({app, path: '/gql' })
+gqlServer.applyMiddleware({app, path: '/gql' });
 
 const server = http.createServer(app);
 
@@ -52,7 +57,7 @@ app.get('/', ( req, res, next ) => {
 //     }
 // }
 
-const socketServer : SocketIO.Server = socket(server);
+const socketServer = socket(server);
 
 socketServer.on('connection', (client) => {
     console.log('Client Connected');
@@ -70,6 +75,6 @@ socketServer.on('connection', (client) => {
     })
 })
 
-server.listen(3001, function() : void { 
+server.listen(3001, function() { 
     console.log(`Server Started`);
 })
