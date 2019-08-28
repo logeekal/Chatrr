@@ -1,16 +1,19 @@
 type Query {
     userList: [User]
-    user(username: String!): User
+    user(userName: String!): User
     rooms: [Room]
     room(name: String!): Room
     me: User
-    ip: String!
+    isloggedIn(userName: String!): Boolean
 }
 
 type User {
     id: ID!
     userName: String!
     avatar: String!
+    gender: String!
+    ip: String!
+    location: String!
     loggedIn: Boolean!
     createdAt: String!
     updatedAt: String!
@@ -47,13 +50,13 @@ type conversation {
 
 type Mutation {
     # if false, someone with same userName is already loggedin
-    loginUser(userName: String!): LoginResponse!
+    loginUser(userName: String!, gender: String! ): GenericResponse!
 
     """
     Need to update the username to something else on Logout...
     So that another user can login with same username.
     """    
-    logoutUser(userName: String!): LogoutResponse!
+    logoutUser(userName: String!): GenericResponse!
 
     """
     When a user first time joins a room. There is not way to exit all t
@@ -66,12 +69,7 @@ type Mutation {
 
 }
 
-type LogoutResponse {
-    success: Boolean!
-    error: String
-}
-
-type LoginResponse {
+type GenericResponse {
     success: Boolean!
     error: String
 }

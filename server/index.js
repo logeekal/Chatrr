@@ -9,8 +9,8 @@ const  {importSchema} = require('graphql-import');
 const { ApolloServer, gql } = require('apollo-server-express');
 const resolvers = require('./gql/resolvers');
 
-const typeDefs = importSchema('./schema.graphql');
-const store = require('./db');
+const typeDefs = importSchema('./gql/schema.graphql');
+const { store } = require('./db');
 
 console.log(store);
 const app  = express();

@@ -14,7 +14,7 @@ CREATE TABLE "rooms" (
   "id" int PRIMARY KEY,
   "name" varchar,
   "title" varchar,
-  "avatar" string,
+  "avatar" varchar,
   "createdAt" timestamp,
   "updatedAt" timestamp
 );

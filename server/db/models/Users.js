@@ -1,26 +1,49 @@
-const { Sequelize, Model, DataTypes, Op } = require("sequelize");
+const {DataTypes } = require('sequelize');
 
-const { seqConn } = require('../def')
+'use strict'
+module.exports = (sequelize, DataTypes) => {
+    const uuidv1 = require('uuid/v1');
+    const users = sequelize.define('users',{
+        id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            comment: 'UUID For the User',
+            primaryKey: true,
+            defaultValue: function(){
+                return uuidv1();
+            }
+        },
+        userName: { 
+            type: DataTypes.STRING, 
+            allowNull: false, 
+        },
+        loggedIn: { 
+            type: DataTypes.BOOLEAN, 
+        },
+        avatar: {
+            type: DataTypes.STRING,
+            defaultValue: 'avatar'
+        },
+        gender: {
+            type: DataTypes.ENUM,
+            defaultValue: 'U',
+            values: ['M','F','U']
+        },
+        ip: {
+            type: DataTypes.STRING,
+            defaultValue:'TEST IP'
+        },
+        location: {
+            type: DataTypes.STRING,
+            defaultValue: 'Delhi'
+        },
+        createdAt: { type: DataTypes.DATE },
+        updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+    });
 
-class Users extends Model { }
-Users.init({
-    id: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        comment: 'UUID For the User',
-        primaryKey: true
-    },
-    userName: { type: DataTypes.STRING, allowNull: false, unique: 'idx_user_loggedin' },
-    loggedIn: { type: DataTypes.BOOLEAN, unique: 'idx_user_loggedin' },
-    avatar: DataTypes.STRING,
-    gender: DataTypes.CHAR,
-    ip: DataTypes.STRING,
-    location: DataTypes.STRING,
-    createdOn: { type: DataTypes.DATE },
-    updatedOn: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
-}, { sequelize: seqConn, modelName: 'users' })
+    users.associate = function(models){
 
-module.exports = {
-    Users
-}
+    };
 
+    return users;
+};

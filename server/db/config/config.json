@@ -1,0 +1,11 @@
+{
+  "development": {
+    "username": "SAFE_CHAT_ADMIN",
+    "password": "S@f3 Ch@t Adm1n",
+    "database": "SAFE_CHAT",
+    "host": "127.0.0.1",
+    "dialect": "postgres",
+    "operatorsAliases": false,
+    "logging": false
+  }
+}
