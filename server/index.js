@@ -4,6 +4,7 @@ const socket= require('socket.io');
 const http =  require('http')
 
 const { UserAPI } = require('./gql/datasources/users')
+const { RoomsAPI } = require('./gql/datasources/rooms')
 
 const  {importSchema} = require('graphql-import');
 const { ApolloServer, gql } = require('apollo-server-express');
@@ -19,7 +20,8 @@ const gqlServer  = new ApolloServer({
     typeDefs,
     resolvers,
     dataSources: () => ({
-        userAPI: new UserAPI({ store })
+        userAPI: new UserAPI({ store }),
+        roomsAPI: new RoomsAPI({ store })
     })
 });
 

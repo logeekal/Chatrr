@@ -14,10 +14,10 @@ class UserAPI extends DataSource {
 
     
 
-    async findOrCreateUser( { userName } = {} ) {
+    async find( { userName } = {} ) {
         const name = this.context && this.context.user ? this.context.user.userName : userName;
         
-        const users = await this.store.Users.findOrCreate( { where: { userName: name } } );
+        const users = await this.store.Users.findAll( { where: { userName: name } } );
         console.log(users)
         return users && users[0] ? users[0] : null;
     }
@@ -36,20 +36,41 @@ class UserAPI extends DataSource {
         console.log(result);
     }
 
-    
+
     /**
      * Romove function does not act
      * 
      * @param {string} userName userName which needs to be removed from the system.
      */
     async update(fields,condition) {
-        console.log('updating fields logout.')
         console.log(fields);
         console.log(condition)
 
         const result = await this.store.Users.update(fields, condition);
+        console.log(result);
         return result;
+    }
 
+
+    async getConversations({userName}) {
+        let result = await this.store.Users.find({
+            where: {
+                userName: userName
+            }
+        })
+
+        // Now we have got the user. Now getting the conversations.
+        console.log('Getting Sent Conversations User');
+        sentConversations = await result.getSentConversations();
+
+        //Now getting Recieved Conversations
+        console.log('Getting Recieved Conversations User');
+        receivedConversations = await result.getRecievedConversations();
+
+        return {
+            sentConversations,
+            receivedConversations
+        }
     }
 }
 

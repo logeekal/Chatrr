@@ -1,5 +1,7 @@
 type Query {
     userList: [User]
+    roomMembers:[User]
+    roomConversations:[Conversations]
     user(userName: String!): User
     rooms: [Room]
     room(name: String!): Room
@@ -19,6 +21,20 @@ type User {
     updatedAt: String!
 }
 
+
+type Conversations {
+    id: ID!
+    from: String!
+    toUser: String
+    toRoom: String
+    toType: String!
+    text: String!
+    seen: Boolean
+    delievered: Boolean
+    sent: Boolean
+    createdAt: Boolean
+}
+
 "*****************************"
 
 enum RoomType {
@@ -31,21 +47,14 @@ enum RoomType {
 type Room {
     id: ID!
     name: String!
-    label: String!
-    type: RoomType!
+    title: String!
+    avatar: String!
     description: String
     active: Boolean
     createdAt: String
-    updateAt: String
-    members: [User]
+    updatedAt: String
 }
 
-
-type conversation {
-    id: ID!  
-    type: String
-    members: [User]!
-}
 
 
 type Mutation {
@@ -65,7 +74,9 @@ type Mutation {
     Rooms are kind of groups where anyone can enter and chat each other \
     personally and collaboratively."
     """
-    joinRoom(userName: String!, roomId: String!): JoinRoomResponse!
+    addUserToRoom(userName: String!, roomId: String!): GenericResponse!
+
+    removeUserFromRoom(userName: String!): GenericResponse!
 
 }
 
@@ -73,6 +84,7 @@ type GenericResponse {
     success: Boolean!
     error: String
 }
+
 
 type JoinRoomResponse{
     success: Boolean!

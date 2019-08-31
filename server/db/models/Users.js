@@ -39,10 +39,40 @@ module.exports = (sequelize, DataTypes) => {
         },
         createdAt: { type: DataTypes.DATE },
         updatedAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+    },{
+        indexes: [
+            {
+                unique: true,
+                name: 'idx_username',
+                fields: [sequelize.fn('lower', sequelize.col('userName'))]
+            }
+        ]
     });
 
     users.associate = function(models){
-
+        users.hasMany(models.conversations,{
+            as: 'sentConversations',
+            foreignKey: 'from',
+            scope:  {
+                toType: 'USER'
+            }
+        });
+        users.hasMany(models.conversations,{
+            as: 'sentRoomConversations',
+            foreignKey: 'from',
+            scope:  {
+                toType: 'ROOM'
+            }
+        });
+        users.hasMany(models.conversations,{
+            as: 'recievedConversations',
+            foreignKey: 'toUser',
+            scope:{
+                toType: 'USER' 
+            }
+        });
+        
+        users.belongsTo(models.rooms,);
     };
 
     return users;
