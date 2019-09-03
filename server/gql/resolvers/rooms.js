@@ -11,11 +11,12 @@ const getAllActiveRooms = async (_, {} , { dataSources }) => {
 
 
 const getRoomUsers =  async (_, {roomId}, {dataSources}) => {
-    return await dataSources.roomsAPI.getRoomUser();
+    return await dataSources.roomsAPI.getRoomUsers(roomId);
 }
 
-const getRoomConversations = async (_, {roomId, fromTime}, {dataSources}) => {
-    return await dataSources.RoomsAPI.getRoomConversations(roomId, fromTime)
+const getRoomConversations = async (_, {roomId, from}, {dataSources}) => {
+    console.log(`Resolver getRoomConversations: ${from}`)
+    return await dataSources.roomsAPI.getRoomConversations(roomId, from)
 }
 
 
@@ -23,7 +24,7 @@ const getRoomConversations = async (_, {roomId, fromTime}, {dataSources}) => {
 
 module.exports = {
     Query: {
-        roomMembers: getRoomUsers,
+        roomUsers: getRoomUsers,
         roomConversations: getRoomConversations,
         rooms: getAllActiveRooms
     },

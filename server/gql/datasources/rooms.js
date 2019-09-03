@@ -1,5 +1,5 @@
 const { DataSource } = require('apollo-datasource');
-const { Model } = require('sequelize');
+const { Op } = require('sequelize');
 
 
 class RoomsAPI extends DataSource {
@@ -66,26 +66,61 @@ class RoomsAPI extends DataSource {
 
 
     async getRoomConversations(roomId, fromTime) {
+        console.log('Now getting Conversations');
+        
+        console.log(fromTime);
+        let date = new Date(parseInt(fromTime));
+        console.log(date);
 
-        let date = new Date(fromTime);
-        date = date.toLocaleDateString;
-
-        return await this.store.Rooms.findAll({
+        let currRoom = await this.store.Rooms.findOne({
             where: {
                 id: roomId
-            },
-            includes: {
-                model: this.store.Conversations,
-                where: `createdAt > ${ date }`
             }
-        });
+        })
+
+        console.log(this.store.Users.associations);
+        console.log(this.store.Conversations.associations);
+        return await currRoom.getRoomConversations({
+            where : {
+                createdAt: {
+                    [Op.gte] : date
+                }
+            },
+            order: ['createdAt'],
+            include:[{
+                model: this.store.Users,
+                as: 'senders',
+                
+                //     where: {
+                //     loggedIn : true
+
+                // }
+            }]
+        })
     }
+    //     return await this.store.Rooms.findAll({
+    //         where: {
+    //             id: roomId
+    //         },
+    //         includes: {
+    //             model: this.store.Conversations,
+    //             where: `createdAt > ${ date }`
+    //         }
+    //     });
+    // }
 
     async getRoomUsers(roomId) {
-        return await room.getUsers({
+        let currRoom =  await this.store.Rooms.findOne({
+            where: {
+                id: roomId
+            }
+        })
+
+        return await currRoom.getUsers({
             where : {
                 loggedIn: true
             },
+            order: ['userName'],
             includes:{
                 model: this.store.Rooms,
                 where:  {

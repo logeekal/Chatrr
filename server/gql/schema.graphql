@@ -1,12 +1,17 @@
 type Query {
-    userList: [User]
-    roomMembers:[User]
-    roomConversations:[Conversations]
+    userList: [User] #####
     user(userName: String!): User
+    getUserConversations(userName: String!): ConversationTrail!
+    # isloggedIn(userName: String!): Boolean
+    
+    roomUsers(roomId: ID!):[User]    
+    roomConversations(roomId: ID!, from: String!):[Conversations]
     rooms: [Room]
-    room(name: String!): Room
-    me: User
-    isloggedIn(userName: String!): Boolean
+
+    # room(name: String!): Room ###
+    # me: User ###
+    
+    
 }
 
 type User {
@@ -16,6 +21,7 @@ type User {
     gender: String!
     ip: String!
     location: String!
+    connected: Boolean!
     loggedIn: Boolean!
     createdAt: String!
     updatedAt: String!
@@ -32,7 +38,7 @@ type Conversations {
     seen: Boolean
     delievered: Boolean
     sent: Boolean
-    createdAt: Boolean
+    createdAt: String!
 }
 
 "*****************************"
@@ -76,8 +82,11 @@ type Mutation {
     """
     addUserToRoom(userName: String!, roomId: String!): GenericResponse!
 
+    sendConversation(userName: String!, to: String!, toType: String!, text: String!) : GenericResponse!
+
     removeUserFromRoom(userName: String!): GenericResponse!
 
+    updateConnectedStatus(userName: String!, status: Boolean!) : GenericResponse!
 }
 
 type GenericResponse {
@@ -90,4 +99,9 @@ type JoinRoomResponse{
     success: Boolean!
     error: String
     room: Room
+}
+
+type ConversationTrail {
+    sentConversations: [Conversations],
+    receivedConversations: [Conversations]
 }

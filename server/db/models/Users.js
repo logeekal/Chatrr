@@ -14,8 +14,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         userName: { 
-            type: DataTypes.STRING, 
+            type: DataTypes.CITEXT(50), 
             allowNull: false, 
+        },
+        connected:{
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         },
         loggedIn: { 
             type: DataTypes.BOOLEAN, 
@@ -53,17 +58,17 @@ module.exports = (sequelize, DataTypes) => {
         users.hasMany(models.conversations,{
             as: 'sentConversations',
             foreignKey: 'from',
-            scope:  {
-                toType: 'USER'
-            }
+            // scope:  {
+            //     toType: 'USER'
+            // }
         });
-        users.hasMany(models.conversations,{
-            as: 'sentRoomConversations',
-            foreignKey: 'from',
-            scope:  {
-                toType: 'ROOM'
-            }
-        });
+        // users.hasMany(models.conversations,{
+        //     as: 'sentRoomConversations',
+        //     foreignKey: 'from',
+        //     // scope:  {
+        //     //     toType: 'ROOM'
+        //     // }
+        // });
         users.hasMany(models.conversations,{
             as: 'recievedConversations',
             foreignKey: 'toUser',

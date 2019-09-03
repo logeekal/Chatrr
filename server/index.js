@@ -22,7 +22,9 @@ const gqlServer  = new ApolloServer({
     dataSources: () => ({
         userAPI: new UserAPI({ store }),
         roomsAPI: new RoomsAPI({ store })
-    })
+    }),
+    playground: false,
+    
 });
 
 gqlServer.applyMiddleware({app, path: '/gql' });

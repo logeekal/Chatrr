@@ -5,11 +5,53 @@ const addUserToRoomMutation = ( userName, roomId ) => {
             error
         }
     }`;
-    console.log(mutation);
     return  mutation;
 }
 
 
+const sendConversation = (fromUser, to, toType, text) => {
+    let mutation = ` mutation send {
+        sendConversation(userName: "${ fromUser }", to: "${ to }", toType: "${ toType }", text: "${ text }" ){
+            success
+            error
+        }
+    }
+    `;
+    return mutation
+}
+
+
+const updateConnectedStatus = (userName, status) => {
+    let mutation = `mutation updateConnStatus {
+        updateConnectedStatus(userName: "${userName}", status: ${status}){
+            success
+            error
+        }
+    }
+    `;
+
+    return mutation;
+}
+
+
+const loginUserMutation = (userName, gender) => `mutation login { loginUser(userName: "${ userName }", gender: "${gender}"){ \
+    success \
+    error \
+  }  \
+}`;
+
+const logoutUserMutation = (userName) => `mutation logout { logoutUser(userName: "${ userName }"){ \
+    success \
+    error \
+  }  \
+}`;
+
+
+
 module.exports = {
-    addUserToRoomMutation
+    addUserToRoomMutation,
+    sendConversation,
+    updateConnectedStatus,
+    loginUserMutation,
+    logoutUserMutation
 }

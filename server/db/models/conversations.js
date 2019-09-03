@@ -56,6 +56,17 @@ module.exports = (sequelize, DataTypes) => {
   });
   conversations.associate = function(models) {
     // associations can be defined here
-  };
+    conversations.belongsTo(models.users,{
+      foreignKey: 'from',
+      as: 'senders'
+    });
+
+    conversations.belongsTo(models.users,{
+      foreignKey: 'to'
+    });
+    conversations.belongsTo(models.rooms,{
+      foreignKey: 'to'
+    }); 
+   };
   return conversations;
 };

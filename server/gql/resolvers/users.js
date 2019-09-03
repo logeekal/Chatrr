@@ -34,6 +34,8 @@ const addUserToRoom = async (_, {userName, roomId}, {dataSources}) => {
         };
 
         let result = await dataSources.userAPI.update(updateFields, filters);
+        console.log("After adding users to Room");
+        console.log(result);
         return getUpdateResponseBasedOnResult(
             result, 
             'Error', 
@@ -42,6 +44,7 @@ const addUserToRoom = async (_, {userName, roomId}, {dataSources}) => {
         
     }catch(err) {
         console.log('Error While adding user to the room.');
+        console.log(err);
         return {
             success: false,
             error: JSON.stringify({...err})
@@ -72,6 +75,7 @@ const userUpdateResolversFactory = (type) => {
 
                     updateFields = {
                         loggedIn: false,
+                        connected: false,
                         roomId : null,
                         userName: userName+'_'+Date.now()
                     };
@@ -113,29 +117,84 @@ const userUpdateResolversFactory = (type) => {
 
 
 const getUser = async(_, { userName }, { dataSources } ) => {
-    let result = await dataSource.userAPI.find({
-        where : {
+
+    console.log('In getUser Resolver');
+    console.log(userName);
+    let result = await dataSources.userAPI.find({
+        where: {
             userName: userName
         }
     });
-
+    console.log('Results for get user are ');
+    console.log(result)
     return result;
 }
 
 
-const getConversationsOfUser = async(_, { userName }, { dataSources }) => {
+const getUserConversations = async(_, { userName }, { dataSources }) => {
+    console.log('getUserConversations resolver')
     let result = dataSources.userAPI.getConversations({userName});
+    return result;
+}
+
+
+const sendConversation = async (_, {userName, to, toType, text}, { dataSources} ) => {
+    console.log('In Send Conversation resolver');
+    try {let result = await dataSources.userAPI.sendConversation({userName, to, toType, text});
+    return {
+        
+        success: true,
+        error: null
+    };
+}catch(err){
+    return {
+        success: false,
+        error: err.message
+    }
+
+}
+}
+
+const updateConnectedStatus = async(_, {userName, status}, {dataSources}) => {
+    let filters = {
+       where:{
+           userName:  userName
+        }
+
+    };
+
+    let updateFields = {
+        
+        connected: status
+    
+    };
+
+    try{
+        await dataSources.userAPI.update(updateFields, filters);
+        return {
+            success: true,
+            error: null
+        }
+    }catch(err){
+        return {
+            success: false,
+            error: err
+        }
+    }
 }
 
 
 module.exports = {
     Query: {
         user: getUser,
+        getUserConversations: getUserConversations,
     },
     Mutation: {
         loginUser: loginUser,
         logoutUser: userUpdateResolversFactory('logoutUser'),
+        updateConnectedStatus: updateConnectedStatus,
         addUserToRoom: addUserToRoom,
-        removeUserFromRoom: userUpdateResolversFactory('logoutUser'),
+        removeUserFromRoom: userUpdateResolversFactory('removeUserFromRoom'),
+        sendConversation: sendConversation,
     }
 }

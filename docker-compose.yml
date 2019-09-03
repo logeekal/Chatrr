@@ -4,10 +4,10 @@ services:
   safechatdb:
     image: postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_PASSWORD: S@f3 Ch@t Adm1n
-      POSTGRES_USER: SAFE_CHAT_ADMIN
-      POSTGRES_DB: SAFE_CHAT
+    # environment:
+    #   POSTGRES_PASSWORD: S@f3 Ch@t Adm1n2
+    #   POSTGRES_USER: SAFE_CHAT_ADMIN2
+    #   POSTGRES_DB: SAFE_CHAT2
     volumes:
       - pgData:/var/lib/postgresql/data
     ports:
