@@ -23,9 +23,9 @@ class UserAPI extends DataSource {
     }
 
     async create({ userName, gender }) {
-        console.log('Loggin In User Now.');
-        console.log("In User API in GQL Data sources:  Context values is  : ");
-        console.log(this.context);
+        // console.log('Loggin In User Now.');
+        // console.log("In User API in GQL Data sources:  Context values is  : ");
+        // console.log(this.context);
         const loggedIn = true;
         const result = await this.store.Users.create({
             userName,
@@ -34,6 +34,7 @@ class UserAPI extends DataSource {
         });
         console.log('Got the Result');
         console.log(result);
+        return result;
     }
 
 

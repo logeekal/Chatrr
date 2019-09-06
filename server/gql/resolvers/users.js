@@ -1,11 +1,18 @@
 const { getUpdateResponseBasedOnResult } = require('./helpers');
+const  { login, logout, isAuthenticated } = require('../../utils/auth/auth');
 
-const loginUser = async (_, { userName, gender }, { dataSources }) => {
+
+const loginUser = async (_, { userName, gender }, context) => {
+    let dataSources = context.dataSources;
+    // console.log(context);
     try {
         const result = await dataSources.userAPI.create({
             userName, 
             gender
         });
+
+        login(context.req,result);
+        // console.log(context.req.session);
 
         return {
             success: true,
@@ -54,7 +61,8 @@ const addUserToRoom = async (_, {userName, roomId}, {dataSources}) => {
 
 
 const userUpdateResolversFactory = (type) => {
-    return async(_, {userName}, {dataSources}) =>{
+    return async(_, {userName}, context) =>{
+        let {dataSources, req} = context;
         let result;
         let updateFields;
         let filters  = {
@@ -90,13 +98,16 @@ const userUpdateResolversFactory = (type) => {
                 default:
                     result=""
             }
+            logout(req);
             result = await dataSources.userAPI.update(updateFields, filters);
             if ( result[0] > 0 ) {
+                
                 return {
                     success: true,
                     error: null
                 }
             }else{
+
                 console.log('Thorwing Error');
                 throw {
                     name:   "NO_RECORD_ERROR",
@@ -116,8 +127,9 @@ const userUpdateResolversFactory = (type) => {
 
 
 
-const getUser = async(_, { userName }, { dataSources } ) => {
-
+const getUser = async(_, { userName }, context ) => {
+    let {dataSources, req} = context;
+    isAuthenticated(req);
     console.log('In getUser Resolver');
     console.log(userName);
     let result = await dataSources.userAPI.find({
@@ -183,6 +195,9 @@ const updateConnectedStatus = async(_, {userName, status}, {dataSources}) => {
     }
 }
 
+const getLoggedInUserDetails = (_, __ , context) => {
+    console.log(context);
+}
 
 module.exports = {
     Query: {

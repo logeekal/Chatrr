@@ -1,3 +1,5 @@
+
+
 type Query {
     userList: [User] #####
     user(userName: String!): User
@@ -13,6 +15,7 @@ type Query {
     
     
 }
+
 
 type User {
     id: ID!
