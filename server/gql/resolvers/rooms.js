@@ -1,11 +1,15 @@
 const { getUpdateResponseBasedOnResult } = require('./helpers');
+const  { login, logout, isAuthenticated } = require('../../utils/auth/auth');
+const logger = require('../../utils/logging').log(module);
 
-const getAllRooms = async (_, {} , { dataSources }) => {
+const getAllRooms = async (_, {} , { dataSources, req }) => {
+    isAuthenticated(req);
     return  await dataSources.roomsAPI.getAllRooms();
 };
 
 
-const getAllActiveRooms = async (_, {} , { dataSources }) => {
+const getAllActiveRooms = async (_, {} , { dataSources, req }) => {
+    isAuthenticated(req);
     return  await dataSources.roomsAPI.getAllActiveRooms();
 };
 
@@ -15,7 +19,7 @@ const getRoomUsers =  async (_, {roomId}, {dataSources}) => {
 }
 
 const getRoomConversations = async (_, {roomId, from}, {dataSources}) => {
-    console.log(`Resolver getRoomConversations: ${from}`)
+    logger.debug(`Resolver getRoomConversations: ${from}`)
     return await dataSources.roomsAPI.getRoomConversations(roomId, from)
 }
 

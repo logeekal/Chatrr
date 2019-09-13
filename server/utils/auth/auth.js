@@ -1,8 +1,9 @@
 const cookieSession = require('cookie-session');
 const {SECRET} = require('../../configs/secrets');
+const logger = require('../logging').log(module);
 
 const login = (req, user) => {
-    console.log('Setting Session Now');
+    logger.debug('Setting Session Now');
     req.session.user = user;
     req.session.save();
 }

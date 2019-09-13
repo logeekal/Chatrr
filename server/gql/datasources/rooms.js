@@ -1,6 +1,6 @@
 const { DataSource } = require('apollo-datasource');
 const { Op } = require('sequelize');
-
+const logger =  require('../../utils/logging').log(module);
 
 class RoomsAPI extends DataSource {
     constructor({store}) {
@@ -20,7 +20,7 @@ class RoomsAPI extends DataSource {
 
     async createRoom (roomObj) {
         let newRoom = await this.store.Rooms.create(roomObj);
-        console.log(newRoom);
+        console.debug(newRoom);
         return newRoom;
     }
 
@@ -50,7 +50,7 @@ class RoomsAPI extends DataSource {
                 active: true
             }
         })
-        console.log(result);
+        logger.debug(result);
         return result;
     }
 
@@ -60,17 +60,17 @@ class RoomsAPI extends DataSource {
                 name: name
             }
         });
-        console.log(result);
+        logger.debug(result);
         return result;
     }
 
 
     async getRoomConversations(roomId, fromTime) {
-        console.log('Now getting Conversations');
+        logger.debug('Now getting Conversations');
         
-        console.log(fromTime);
+        logger.debug(fromTime);
         let date = new Date(parseInt(fromTime));
-        console.log(date);
+        logger.debug(date);
 
         let currRoom = await this.store.Rooms.findOne({
             where: {
@@ -78,8 +78,8 @@ class RoomsAPI extends DataSource {
             }
         })
 
-        console.log(this.store.Users.associations);
-        console.log(this.store.Conversations.associations);
+        logger.debug(this.store.Users.associations);
+        logger.debug(this.store.Conversations.associations);
         return await currRoom.getRoomConversations({
             where : {
                 createdAt: {

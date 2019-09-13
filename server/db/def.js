@@ -13,7 +13,9 @@ const seqConn  = new Sequelize(
         dialect: config.db.type,
         host: config.db.host,
         typeValidation: true,
+        logging: false
     }
+    
 );
 
 module.exports = {

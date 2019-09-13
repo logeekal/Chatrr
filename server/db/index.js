@@ -5,7 +5,8 @@ const Rooms = require('./models/Rooms');
 const Conversations = require('./models/conversations');
 const RoomMembers = require('./models/room_members');
 const { seqConn } = require('./def');
-const {migrate} = require('./migrations')
+const {migrate} = require('./migrations');
+const logger = require('../utils/logging').log(module);
 
 
 const store = {
@@ -15,13 +16,17 @@ const store = {
     // RoomMembers:  room_members(seqConn, Sequelize.DataTypes),
 }
 
-console.log(seqConn.models);
+
+
+logger.debug(seqConn.models);
+
 Object.keys(store).map((model)=>{
     
     store[model].associate(seqConn.models);
 })
 
-console.log('Synching Database');
+logger.info('Synching Database');
+
 seqConn.sync({force:true}).then(async ()=>{
     await migrate(store, seqConn.models);
 })

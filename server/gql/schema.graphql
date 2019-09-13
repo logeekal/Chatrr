@@ -1,23 +1,28 @@
+directive @auth(
+    requires: Role = ADMIN,
+) on OBJECT | FIELD_DEFINITION
 
+enum Role {
+    USER
+    ADMIN
+}
 
 type Query {
-    userList: [User] #####
+    userList: [User]  #####
     user(userName: String!): User
     getUserConversations(userName: String!): ConversationTrail!
     # isloggedIn(userName: String!): Boolean
     
-    roomUsers(roomId: ID!):[User]    
+    roomUsers(roomId: ID!):[User]
     roomConversations(roomId: ID!, from: String!):[Conversations]
     rooms: [Room]
 
     # room(name: String!): Room ###
-    # me: User ###
-    
-    
+    # me: User ###   
 }
 
 
-type User {
+type User @auth(requires: USER){
     id: ID!
     userName: String!
     avatar: String!
@@ -31,7 +36,7 @@ type User {
 }
 
 
-type Conversations {
+type Conversations @auth(requires: USER){
     id: ID!
     from: String!
     toUser: String
@@ -53,7 +58,7 @@ enum RoomType {
 
 """ Rooms are kind of groups where anyone can enter and chat each other \
  personally and collaboratively."""
-type Room {
+type Room @auth(requires: USER){
     id: ID!
     name: String!
     title: String!
@@ -68,13 +73,13 @@ type Room {
 
 type Mutation {
     # if false, someone with same userName is already loggedin
-    loginUser(userName: String!, gender: String! ): GenericResponse!
+    loginUser (userName: String!, gender: String! ): GenericResponse!
 
     """
     Need to update the username to something else on Logout...
     So that another user can login with same username.
     """    
-    logoutUser(userName: String!): GenericResponse!
+    logoutUser (userName: String!): GenericResponse!
 
     """
     When a user first time joins a room. There is not way to exit all t
@@ -83,13 +88,16 @@ type Mutation {
     Rooms are kind of groups where anyone can enter and chat each other \
     personally and collaboratively."
     """
-    addUserToRoom(userName: String!, roomId: String!): GenericResponse!
+    addUserToRoom (userName: String!, roomId: String!): GenericResponse! @auth(requires: USER)
 
-    sendConversation(userName: String!, to: String!, toType: String!, text: String!) : GenericResponse!
+    """
+    sendConversation mutation helps system to send message from one entity to another entity, these entity can be 
+    """
+    sendConversation(userName: String, to: String!, toType: String!, text: String!) : GenericResponse! @auth(requires: USER)
 
-    removeUserFromRoom(userName: String!): GenericResponse!
+    removeUserFromRoom(userName: String!): GenericResponse! @auth(requires: USER)
 
-    updateConnectedStatus(userName: String!, status: Boolean!) : GenericResponse!
+    updateConnectedStatus(userName: String!, status: Boolean!) : GenericResponse! @auth(requires: USER)
 }
 
 type GenericResponse {

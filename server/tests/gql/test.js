@@ -1,7 +1,13 @@
 const chai = require("chai");
 const url = "http://localhost:3001";
-const request = require("supertest")(url);
+
+const request = require("supertest").agent(url);
+const requestUser = [];
+requestUser[0] = require("supertest").agent(url);
+requestUser[1] = require("supertest").agent(url);
 const { error_codes } = require("../../configs/error_codes");
+const logger =  require('../../utils/logging').log(module);
+
 const endpoint = "/gql";
 const {
   getRoomsQuery,
@@ -27,74 +33,97 @@ const {
   user2,
   convUser1ToRoom1,
   convUser2ToUser1,
-  convUser2ToRoom1
+  convUser2ToRoom1,
+  convUser1ToUser2,
 } = require("./testData/gqlTestData");
 
 describe("User Behaviour Tests", function() {
   this.timeout(4000);
-  before(function() {
-    console.log("Loggin out users now.");
+  before( async function() {
+    logger.debug("Loggin out users now.");
     request
       .post(endpoint)
       .send({ query: logoutMutationUser1 })
       .end((err, res) => {
-        // console.log(err);
-        // console.log(res);
+        // logger.debug(err);
+        // logger.debug(res);
       });
 
     request
       .post(endpoint)
       .send({ query: logoutMutationUser2 })
       .end((err, res) => {
-        // console.log(err);
-        // console.log(res);
+        // logger.debug(err);
+        // logger.debug(res);
       });
-
-    request
+    logger.debug('In before');
+    try {
+      let response = await requestUser[0]
       .post(endpoint)
-      .send({ query: getRoomsQuery })
-      .end((err, res) => {
-        if (err) {
-          console.log("Error in before block in getting the existing rooms");
-          throw err;
-        } else {
-          this.rooms = res.body.data.rooms;
-          // console.log(`this.rooms : ${this.rooms}`);
-        }
-      });
+      .send({query : loginUserMutation(user1.userName, user1.gender)})
+    
+      // logger.debug(response);
+    // agent._saveCookies(response);
+  }catch(err){
+    logger.debug(err);
+  }
+    
+    try {
+    // let req = request.post(endpoint);
+    // logger.debug(req)
+    // agent._attachCookies(req);
+    let response = await  requestUser[0]
+      .post(endpoint)
+      .send({ query: getRoomsQuery });
+    this.rooms = response.body.data.rooms;
+    // logger.debug("rooms are ");
+    //   logger.debug(this.rooms);
+  }catch(err){
+      logger.debug(err);
+    }
+
+      // .end((err, res) => {
+      //   if (err) {
+      //     logger.debug("Error in before block in getting the existing rooms");
+      //     throw err;
+      //   } else {
+      //     this.rooms = res.body.data.rooms;
+      //     // logger.debug(`this.rooms : ${this.rooms}`);
+      //   }
+      // });
   });
 
-  it("Users Logging In", done => {
-    const loginMutation = loginMutationUser1;
-    request
-      .post(endpoint)
-      .send({ query: loginMutation })
-      .end((err, res) => {
-        // res should contain success and Error
-        // console.log(err);
-        // console.log(res);
-        let response = res.body.data.loginUser;
-        // console.log(response);
-        chai.assert.strictEqual(
-          res.status,
-          200,
-          "Status of request does not match"
-        );
-        chai
-          .expect(Object.keys(response))
-          .to.have.members(["success", "error"]);
-        chai.assert.strictEqual(
-          response.success,
-          true,
-          "Success message does not match."
-        );
-        chai.expect(response.error).to.be.null;
-        done();
-      });
-  });
+  // it("Users Logging In", done => {
+  //   const loginMutation = loginMutationUser1;
+  //   request
+  //     .post(endpoint)
+  //     .send({ query: loginMutation })
+  //     .end((err, res) => {
+  //       // res should contain success and Error
+  //       // logger.debug(err);
+  //       // logger.debug(res);
+  //       let response = res.body.data.loginUser;
+  //       // logger.debug(response);
+  //       chai.assert.strictEqual(
+  //         res.status,
+  //         200,
+  //         "Status of request does not match"
+  //       );
+  //       chai
+  //         .expect(Object.keys(response))
+  //         .to.have.members(["success", "error"]);
+  //       chai.assert.strictEqual(
+  //         response.success,
+  //         true,
+  //         "Success message does not match."
+  //       );
+  //       chai.expect(response.error).to.be.null;
+  //       done();
+  //     });
+  // });
 
   it("Another user with Same Username should fail", done => {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({ query: loginMutationUser1 })
       .end((err, res) => {
@@ -107,7 +136,7 @@ describe("User Behaviour Tests", function() {
           200,
           "Status of request does not match"
         );
-        // console.log(res.body);
+        // logger.debug(res.body);
         chai.expect(res.body).to.have.keys(["data", "errors"]);
         chai.expect(response).to.have.keys(["success", "error"]);
         chai.assert.strictEqual(
@@ -120,15 +149,15 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Another user with different Username should be able to login", done => {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({ query: loginMutationUser2 })
       .end((err, res) => {
         // res should contain success and Error
-        // console.log(err);
-        // console.log(res);
+        // logger.debug(err);
+        // logger.debug(res);
         let response = res.body.data.loginUser;
-        // console.log(response);
+        // logger.debug(response);
         chai.assert.strictEqual(
           res.status,
           200,
@@ -148,7 +177,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Get All Active Rooms", function(done) {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({ query: getRoomsQuery })
       .end((err, res) => {
@@ -183,7 +212,7 @@ describe("User Behaviour Tests", function() {
 
   it("Adding user 1 to any room should be successfull", function(done) {
     let rooms = this.rooms; //catch the value set in before
-    request
+    requestUser[0]
       .post(endpoint)
       .send({ query: addUserToRoomMutation(user1.userName, rooms[0].id) })
       .end((err, res) => {
@@ -191,7 +220,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          //    console.log(response);
+             logger.debug(response);
           chai.expect(response).to.have.keys(["data"]);
           chai.expect(response.data).to.have.keys(["addUserToRoom"]);
           chai
@@ -213,7 +242,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from user1 to room1 should be successfull", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({
         query: sendConversation(
@@ -228,6 +257,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
+          logger.debug(response);
           chai.expect(response).to.to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -248,14 +278,14 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from User1 to User 2 should be successfull", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({
         query: sendConversation(
           user1.userName,
           user2.userName,
           "USER",
-          convUser1ToRoom1.text
+          convUser1ToUser2.text
         )
       })
       .end((err, res) => {
@@ -283,7 +313,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from User 2 to User 1 should be successfull", function(done) {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({
         query: sendConversation(
@@ -298,7 +328,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          // logger.debug(response);
           chai.expect(response).to.to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -318,8 +348,8 @@ describe("User Behaviour Tests", function() {
       });
   });
 
-  it("Getting the conversation for user2 should result in 3 messages. 1 Room , 1 From and 1 To", function(done) {
-    request
+  it("Getting the conversation for user 1 should result in 3 messages. 1 Room , 1 From and 1 To", function(done) {
+    requestUser[0]
       .post(endpoint)
       .send({ query: getUserConversations(user1.userName) })
       .end((err, res) => {
@@ -327,7 +357,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // console.log(JSON.stringify(response));
+          // logger.debug(JSON.stringify(response));
           chai
             .expect(response.data.getUserConversations)
             .to.have.keys(["sentConversations", "receivedConversations"]);
@@ -356,7 +386,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Getting the details of User 1 should be successfull", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({ query: getUser(user1.userName) })
       .end((err, res) => {
@@ -364,6 +394,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
+          // logger.debug(response);
           chai.expect(response).to.have.key("data");
           chai.expect(response.data).to.have.key("user");
           chai
@@ -385,16 +416,16 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Getting the details of User 1 should be successfull when userName is passed as lowercase", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({ query: getUser(user1.userName.toLowerCase()) })
       .end((err, res) => {
         if (err) {
-          console.log(err);
+          logger.debug(err);
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          // logger.debug(response);
           chai.expect(response).to.have.key("data");
           chai.expect(response.data).to.have.key("user");
           chai
@@ -416,16 +447,16 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Updating Connected status of User 2 to offline should be successfull", function(done) {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({ query: updateConnectedStatus(user2.userName, false) })
       .end((err, res) => {
         if (err) {
-          console.log(err);
+          logger.debug(err);
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          // logger.debug(response);
           chai.expect(response).to.have.keys(["data"]);
           chai.expect(response.data).to.have.keys(["updateConnectedStatus"]);
           chai
@@ -447,7 +478,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from User1 to User with wrong toType should fail", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({
         query: sendConversation(
@@ -462,7 +493,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          // logger.debug(response);
           chai.expect(response).to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -483,7 +514,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from User1 to offline User 2 should fail", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({
         query: sendConversation(
@@ -498,7 +529,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          // logger.debug(response);
           chai.expect(response).to.to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -519,7 +550,7 @@ describe("User Behaviour Tests", function() {
   });
 
   it("Sending text from offine user 2 shoud fail", function(done) {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({
         query: sendConversation(
@@ -534,7 +565,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // console.log(response);
+          logger.debug(response);
           chai.expect(response).to.to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -562,7 +593,7 @@ describe("Logging out users.. so that next tests can be carried out.", () => {
       .send({ query: logoutMutationUser1 })
       .end((err, res) => {
         let response = res.body.data.logoutUser;
-        // console.log(response);
+        // logger.debug(response);
         chai.assert.strictEqual(
           res.status,
           200,
@@ -586,7 +617,7 @@ describe("Logging out users.. so that next tests can be carried out.", () => {
       .send({ query: logoutMutationUser2 })
       .end((err, res) => {
         let response = res.body.data.logoutUser;
-        // console.log(response);
+        // logger.debug(response);
         chai.assert.strictEqual(
           res.status,
           200,
@@ -611,28 +642,32 @@ describe("Room behaviour tests", function() {
   let users = [user1, user2];
   let times = [];
   before(async function() {
-    // console.log('Getting all the available Rooms before tests start');
+    // logger.debug('Getting all the available Rooms before tests start');
+    let response;
+    try {
 
-    let response = await request.post(endpoint).send({ query: getRoomsQuery });
-    rooms = response.body.data.rooms;
-    // .end((err, res)=>{
-    //   this.rooms = res.body.data.rooms;
-    // });
-    // console.log('Making sure users are connected and loggedIn');
-    for (let idx in users) {
-      await request.post(endpoint).send({
-        query: loginUserMutation(users[idx].userName, users[idx].gender)
-      });
+      // .end((err, res)=>{
+      //   this.rooms = res.body.data.rooms;
+      // });
+      // logger.debug('Making sure users are connected and loggedIn');
+      for (let idx in users) {
+        await requestUser[idx].post(endpoint).send({
+          query: loginUserMutation(users[idx].userName, users[idx].gender)
+        });
 
-      await request.post(endpoint).send({
-        query: addUserToRoomMutation(users[idx].userName, rooms[0].id)
-      });
-      // console.log(`Adding user in room : ${users[idx].userName}`);
+        response = await requestUser[idx].post(endpoint).send({ query: getRoomsQuery });
+        rooms = response.body.data.rooms;
+
+        await requestUser[idx].post(endpoint).send({
+          query: addUserToRoomMutation(users[idx].userName, rooms[0].id)
+        });
+        // logger.debug(`Adding user in room : ${users[idx].userName}`);
     }
+ 
 
     // Sending first conversation and recording its time.
     times.push(Date.now());
-    response = await request.post(endpoint).send({
+    await requestUser[0].post(endpoint).send({
       query: sendConversation(
         user1.userName,
         rooms[0].id,
@@ -642,7 +677,7 @@ describe("Room behaviour tests", function() {
     });
 
     times.push(Date.now());
-    await request.post(endpoint).send({
+    await requestUser[1].post(endpoint).send({
       query: sendConversation(
         user2.userName,
         rooms[0].id,
@@ -651,39 +686,24 @@ describe("Room behaviour tests", function() {
       )
     });
 
-    // .end((err, res) => {
-    //   if(err){
-    //     throw err
-    //   }else if (res.body.errors){
-    //     throw JSON.stringify(res.body.errors);
-    //   }
-    // });
+  }catch(err){
+    logger.debug(err)
+    throw err;
+  }
 
-    //  console.log("We will wait for 5 seconds before sending next text");
-    // setTimeout(() => (request
-    //   .post(endpoint)
-    //   .send({query: sendConversation(user2.userName, rooms[0].id, 'ROOM', convUser2ToRoom1)})
-    //   .end((err, res) => {
-    //     if(err){
-    //       throw err
-    //     }else if (res.body.errors){
-    //       throw JSON.stringify(res.body.errors);
-    //     }
-    //   })),5000)
-    // });
   });
 
   after(async function(){
 
     // logging out users
     for (let idx in users){
-      await request
+      await requestUser[idx]
             .post(endpoint)
             .send({query : logoutUserMutation(users[idx].userName) });  
     }
   });
   it("Get Room Members", function(done) {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({ query: getRoomUsers(rooms[0].id) })
       .end((err, res) => {
@@ -710,14 +730,14 @@ describe("Room behaviour tests", function() {
   });
 
   it("Get  room Conversations based on time. ", async function() {
-    // console.log(times);
-    let res = await request
+    // logger.debug(times);
+    let res = await requestUser[0]
       .post(endpoint)
 
       .send({ query: getRoomConversations(rooms[0].id, (times[1]).toString()) });
     let response = res.body;
 
-    // console.log(JSON.stringify(response));
+    // logger.debug(JSON.stringify(response));
     chai.expect(response).to.have.keys(["data"]);
     chai.expect(response.data).to.have.keys(["roomConversations"]);
     if (response.data.roomConversations.errors) {

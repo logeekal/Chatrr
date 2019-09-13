@@ -7,6 +7,7 @@ const cookieSession = require('cookie-session');
 const expressSession = require('express-session');
 
 const { isAuthenticated } = require('./utils/auth/auth');
+const { AuthDirective } = require('./gql/directives/AuthDirective');
 
 
 const { SECRET } =  require('./configs/secrets');
@@ -18,9 +19,11 @@ const { RoomsAPI } = require('./gql/datasources/rooms')
 const  {importSchema} = require('graphql-import');
 const { ApolloServer, gql } = require('apollo-server-express');
 const resolvers = require('./gql/resolvers');
+const logger = require('./utils/logging').log(module);
 
 const typeDefs = importSchema('./gql/schema.graphql');
 const { store } = require('./db');
+
 
 
 const app  = express();
@@ -28,17 +31,6 @@ app.use(cookieSession(
     SECRET.COOKIE_SESSION_OPTS
 ));
 
-
-// app.use(expressSession({
-//     name: 'express-session-cookie',
-//     secret: 'asdas',
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie : {
-//         secure: false,
-//         httpOnly: false,
-//     },
-// }))
 
 const  corsOptions = {
     origin: ['http://localhost:3001/', 'http:localhost:3000'],
@@ -52,6 +44,9 @@ const gqlServer  = new ApolloServer({
     cors: corsOptions,
     typeDefs,
     resolvers,
+    schemaDirectives :{
+        auth: AuthDirective
+    },
     dataSources: () => ({
         userAPI: new UserAPI({ store }),
         roomsAPI: new RoomsAPI({ store })
@@ -61,14 +56,13 @@ const gqlServer  = new ApolloServer({
     },
     
     context: ({req}) => {
-        console.log('Session.....');
-        // console.log(req);
-        console.log(req.session);
-        console.log(req.session.id);
-
+        // console.log('Session.....');
+        // // console.log(req);
+        // // 
+        // console.log(req.session);
         if(!req.session){
-            console.log(req.session)
-            throw('Just like that')
+            // logger.debug(req.session)
+            throw('Cookie not working fine.')
         }
         return {req};
         
@@ -77,16 +71,6 @@ const gqlServer  = new ApolloServer({
 });
 
 gqlServer.applyMiddleware({app, path: '/gql' , cors:true});
-
-// gqlServer.applyMiddleware(cookieSession(SECRET.COOKIE_SESSION_OPTS));
-
-// app.use('/gql',
-//     (req, _, next) => {
-//         console.log(req.session);
-//         return next();
-//     },
-//     gqlServer
-// )
 
 const server = http.createServer(app);
 
@@ -104,7 +88,7 @@ app.get('/', ( req, res, next ) => {
 
 // const socketOptions = {
 //     handlePreFlightRequest: (req, res) => {
-//         console.log('handling preflight');
+//         logger.debug('handling preflight');
 //         const headers = {
 //             "Access-Control-Allow-Headers": "Content-Type, Authorization",
 //             "Access-Control-Allow-Origin": req.headers.origin, //or the specific origin you want to give access to,
@@ -118,21 +102,22 @@ app.get('/', ( req, res, next ) => {
 // const socketServer = socket(server);
 
 // socketServer.on('connection', (client) => {
-//     console.log('Client Connected');
+//     logger.debug('Client Connected');
     
 //     client.on('join', function(data) {
-//         console.log(data);
+//         logger.debug(data);
 //         client.emit('messages', 'Hello from Server..got your message');
 //     });
 
 //     client.on('messages', function(data){
-//         console.log(`Recieved from Client : ${data}`);
+//         logger.debug(`Recieved from Client : ${data}`);
 //         if (data == 'Hey'){
 //             client.emit('messages','Hello');
 //         } 
 //     })
 // })
 
+
 server.listen(3001, function() { 
-    console.log(`Server Started`);
+    logger.info('Server started');
 })

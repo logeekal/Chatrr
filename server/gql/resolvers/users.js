@@ -1,25 +1,40 @@
 const { getUpdateResponseBasedOnResult } = require('./helpers');
 const  { login, logout, isAuthenticated } = require('../../utils/auth/auth');
+const logger = require('../../utils/logging').log(module);
 
+
+const getCurrentUser = async (context) => {
+    let {dataSources, req} = context;
+    let currentUserName = isAuthenticated(req).userName;
+
+    let currentUser = await dataSources.userAPI.find({
+        where : {
+            userName: currentUserName
+        }
+    });
+    return currentUser
+}
 
 const loginUser = async (_, { userName, gender }, context) => {
-    let dataSources = context.dataSources;
-    // console.log(context);
+    let {dataSources} = context;
+    // logger.debug(context);
     try {
         const result = await dataSources.userAPI.create({
             userName, 
             gender
         });
+        logger.debug('')
+        logger.debug(result);
 
         login(context.req,result);
-        // console.log(context.req.session);
+        // logger.debug(context.req.session);
 
         return {
             success: true,
             error: result
         }
     } catch (err) {
-        console.log('Error while logging in ');
+        logger.debug('Error while logging in ');
         return {
             success: false,
             error: err
@@ -41,8 +56,8 @@ const addUserToRoom = async (_, {userName, roomId}, {dataSources}) => {
         };
 
         let result = await dataSources.userAPI.update(updateFields, filters);
-        console.log("After adding users to Room");
-        console.log(result);
+        logger.debug("After adding users to Room");
+        logger.debug(result);
         return getUpdateResponseBasedOnResult(
             result, 
             'Error', 
@@ -50,8 +65,8 @@ const addUserToRoom = async (_, {userName, roomId}, {dataSources}) => {
             );
         
     }catch(err) {
-        console.log('Error While adding user to the room.');
-        console.log(err);
+        logger.debug('Error While adding user to the room.');
+        logger.debug(err);
         return {
             success: false,
             error: JSON.stringify({...err})
@@ -71,15 +86,15 @@ const userUpdateResolversFactory = (type) => {
         try{
             switch(type){
                 case 'logoutUser':
-                    console.log('LogOut Resolver triggered');
-                    // console.log('Removing user from the room.')
+                    logger.debug('LogOut Resolver triggered');
+                    // logger.debug('Removing user from the room.')
 
                     // updateFields = {
                     //     roomId : null
                     // };
 
                     // await dataSources.userAPI.update(updateFields, filters);
-                    console.log('Removed user from the room. Now logging user out.')
+                    logger.debug('Removed user from the room. Now logging user out.')
 
                     updateFields = {
                         loggedIn: false,
@@ -90,7 +105,7 @@ const userUpdateResolversFactory = (type) => {
                     
                     break;
                 case  'removeUserFromRoom':
-                    console.log('Removing User from Room.');
+                    logger.debug('Removing User from Room.');
                     updateFields = {
                         roomId: false
                     };
@@ -108,7 +123,7 @@ const userUpdateResolversFactory = (type) => {
                 }
             }else{
 
-                console.log('Thorwing Error');
+                logger.debug('Thorwing Error');
                 throw {
                     name:   "NO_RECORD_ERROR",
                     level:  'Errsadsor',
@@ -129,30 +144,42 @@ const userUpdateResolversFactory = (type) => {
 
 const getUser = async(_, { userName }, context ) => {
     let {dataSources, req} = context;
-    isAuthenticated(req);
-    console.log('In getUser Resolver');
-    console.log(userName);
+    // isAuthenticated(req);
+    logger.debug('In getUser Resolver');
+    logger.debug(userName);
     let result = await dataSources.userAPI.find({
         where: {
             userName: userName
         }
     });
-    console.log('Results for get user are ');
-    console.log(result)
+    logger.debug('Results for get user are ');
+    logger.debug(result);
     return result;
 }
 
 
-const getUserConversations = async(_, { userName }, { dataSources }) => {
-    console.log('getUserConversations resolver')
-    let result = dataSources.userAPI.getConversations({userName});
+const getUserConversations = async(_, { userName }, context) => {
+    let {dataSources, req} =  context;
+
+    
+
+    let currentUser = await getCurrentUser(context);
+       
+    logger.debug('getUserConversations resolver')
+    let result = dataSources.userAPI.getConversations(currentUser);
     return result;
 }
 
 
-const sendConversation = async (_, {userName, to, toType, text}, { dataSources} ) => {
-    console.log('In Send Conversation resolver');
-    try {let result = await dataSources.userAPI.sendConversation({userName, to, toType, text});
+const sendConversation = async (_, {userName, to, toType, text}, context ) => {
+    logger.debug('In Send Conversation resolver');
+    const { dataSources, req } = context;
+
+    const currentUser = await getCurrentUser(context);
+    logger.debug(currentUser)
+
+    try {
+        let result = await dataSources.userAPI.sendConversation({currentUser, to, toType, text});
     return {
         
         success: true,
@@ -193,10 +220,6 @@ const updateConnectedStatus = async(_, {userName, status}, {dataSources}) => {
             error: err
         }
     }
-}
-
-const getLoggedInUserDetails = (_, __ , context) => {
-    console.log(context);
 }
 
 module.exports = {

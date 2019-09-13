@@ -1,7 +1,9 @@
+
+
 const getUpdateResponseBasedOnResult = (result, name, message) => {
 
     if (result) {
-        console.log(' In Response handler');
+        // console.log(' In Response handler');
         // console.log(result.isArray());
 
         if (result[0] > 0) {

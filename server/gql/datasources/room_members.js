@@ -1,5 +1,6 @@
 const { DataSources } = require('apollo-datasource');
 
+
 class RoomMembersAPI extends DataSources   {
     constructor({Store}){
         super();;
@@ -12,12 +13,9 @@ class RoomMembersAPI extends DataSources   {
 
     async addMembersToRoom({userId, roomId}) {
         let result =  await this.store.RoomMembers.create({
-            roomId
+            roomId,
             userId
         });
-        
-        console.log(result);
-
     }
 
     async removeMembersFromRoom({userId, roomId})   {

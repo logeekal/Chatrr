@@ -1,10 +1,13 @@
+const logger = require('../../utils/logging').log(module);
+
+
 function printPrototype(obj, i) {
     var n = Number(i || 0);
     var indent = Array(2 + n).join("-");
 
     for(var key in obj) {
         if(obj.hasOwnProperty(key)) {
-            console.log(indent, key, ": ", obj[key]);
+            logger.debug(indent, key, ": ", obj[key]);
         }
     }
 
@@ -18,8 +21,11 @@ function printPrototype(obj, i) {
 }
 
 
+
+
 const migrate =  async (store, models) => {
-    console.log('Starting migrations..')
+    
+    logger.debug('Starting migrations..');
     //create sample users 
     let newUser1 = await store.Users.create({
         userName: 'hello',
@@ -32,8 +38,8 @@ const migrate =  async (store, models) => {
     })
 
 
-    console.log(`new User created : ` );
-    // console.log(newUser);
+    logger.debug(`new User created : ` );
+    // logger.debug(newUser);
 
     let newRoom = await store.Rooms.create({
         name:   'Delhi',
@@ -41,8 +47,8 @@ const migrate =  async (store, models) => {
         avatar: 'XYZ'
     });
 
-    console.log(`new Room created : ` );
-    console.log(newRoom);
+    logger.debug(`new Room created : ` );
+    logger.debug(newRoom);
     //add member to a room
     let newRoom2 = await store.Rooms.create({
         name:   'Mumbai',
@@ -51,7 +57,7 @@ const migrate =  async (store, models) => {
     });
 
 
-    console.log(models)
+    // logger.debug(models)
     
     let addition1 = await newRoom.addUsers(newUser1);
     let addition2 = await newRoom.addUsers(newUser2);
@@ -60,11 +66,11 @@ const migrate =  async (store, models) => {
             userName : 'hello'
         }
     });
-    console.log(members);
+    logger.debug(members);
 
     let removal = await newRoom.removeUser(newUser2);
     
-    console.log('Addition Succesful');
+    logger.debug('Addition Succesful');
 
     let newConversation = await models.conversations.create({
         from: newUser1.id,
@@ -75,15 +81,15 @@ const migrate =  async (store, models) => {
     })
     
     
-    // console.log("=============================")
-    // console.log(printPrototype(newRoom))
+    // logger.debug("=============================")
+    // logger.debug(printPrototype(newRoom))
 
     // let conversation = await newRoom.addRoomConversation();
-    // console.log(addition2)
-    // console.log(newConversation);
-    // console.log(await newRoom.getRoomConversations())
+    // logger.debug(addition2)
+    // logger.debug(newConversation);
+    // logger.debug(await newRoom.getRoomConversations())
 
-    console.log(models.rooms.associations)
+    logger.debug(models.rooms.associations)
 
     let roomMembers  =  await models.users.findAll({
         include:
@@ -95,8 +101,8 @@ const migrate =  async (store, models) => {
             }
     })
 
-    console.log("==================================");
-    console.log(roomMembers);
+    logger.debug("==================================");
+    logger.debug(roomMembers);
 
 }
 

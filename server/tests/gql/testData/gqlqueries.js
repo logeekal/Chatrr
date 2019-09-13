@@ -81,7 +81,6 @@ query getRoomConvo {
   }
 }`
 
-  // console.log(query);
   return query;
 };
 
