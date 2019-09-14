@@ -12,7 +12,7 @@ const endpoint = "/gql";
 const {
   getRoomsQuery,
   getUserConversations,
-  getUser,
+  getPublicUserDetails,
   getRoomUsers,
   getRoomConversations
 } = require("./testData/gqlqueries");
@@ -385,10 +385,10 @@ describe("User Behaviour Tests", function() {
       });
   });
 
-  it("Getting the details of User 1 should be successfull", function(done) {
+  it("Getting non Admin details of User 1 should be successfull", function(done) {
     requestUser[0]
       .post(endpoint)
-      .send({ query: getUser(user1.userName) })
+      .send({ query: getPublicUserDetails(user1.userName) })
       .end((err, res) => {
         if (err) {
           done(err);
@@ -404,8 +404,6 @@ describe("User Behaviour Tests", function() {
               "userName",
               "avatar",
               "gender",
-              "ip",
-              "location",
               "connected",
               "loggedIn",
               "createdAt"
@@ -418,7 +416,7 @@ describe("User Behaviour Tests", function() {
   it("Getting the details of User 1 should be successfull when userName is passed as lowercase", function(done) {
     requestUser[0]
       .post(endpoint)
-      .send({ query: getUser(user1.userName.toLowerCase()) })
+      .send({ query: getPublicUserDetails(user1.userName.toLowerCase()) })
       .end((err, res) => {
         if (err) {
           logger.debug(err);
@@ -435,8 +433,6 @@ describe("User Behaviour Tests", function() {
               "userName",
               "avatar",
               "gender",
-              "ip",
-              "location",
               "connected",
               "loggedIn",
               "createdAt"

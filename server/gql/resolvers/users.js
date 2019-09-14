@@ -1,7 +1,9 @@
 const { getUpdateResponseBasedOnResult } = require('./helpers');
 const  { login, logout, isAuthenticated } = require('../../utils/auth/auth');
 const logger = require('../../utils/logging').log(module);
-
+const pubsub = require('../subscriptions/pubsub');
+const { NEW_LOGIN, NEW_LOGOUT } = require('../subscriptions/topics');
+ 
 
 const getCurrentUser = async (context) => {
     let {dataSources, req} = context;
@@ -28,6 +30,8 @@ const loginUser = async (_, { userName, gender }, context) => {
 
         login(context.req,result);
         // logger.debug(context.req.session);
+        
+        pubsub.publish(NEW_LOGIN, result)
 
         return {
             success: true,
@@ -116,7 +120,7 @@ const userUpdateResolversFactory = (type) => {
             logout(req);
             result = await dataSources.userAPI.update(updateFields, filters);
             if ( result[0] > 0 ) {
-                
+                pubsub.publish(NEW_LOGOUT, {userName:userName });
                 return {
                     success: true,
                     error: null

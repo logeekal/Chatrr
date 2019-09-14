@@ -27,8 +27,8 @@ type User @auth(requires: USER){
     userName: String!
     avatar: String!
     gender: String!
-    ip: String!
-    location: String!
+    ip: String @auth(requires: ADMIN)
+    location: String @auth(requires: ADMIN)
     connected: Boolean!
     loggedIn: Boolean!
     createdAt: String!
@@ -73,7 +73,12 @@ type Room @auth(requires: USER){
 
 type Mutation {
     # if false, someone with same userName is already loggedin
-    loginUser (userName: String!, gender: String! ): GenericResponse!
+    loginUser ( userName: String!,
+                avatar: String,
+                gender: String,
+                ip: String,
+                location: String
+                ): GenericResponse!
 
     """
     Need to update the username to something else on Logout...
@@ -115,4 +120,15 @@ type JoinRoomResponse{
 type ConversationTrail {
     sentConversations: [Conversations],
     receivedConversations: [Conversations]
+}
+
+
+type Subsription {
+    """
+    newUserInRoom is subsriptions which notifies the client when a new user joins a Room
+    """
+    newUserInRoom(roomId : String!) : User
+
+    newChatMessageToUser(userName: String!) : ConversationTrail
+
 }

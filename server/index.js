@@ -9,6 +9,8 @@ const expressSession = require('express-session');
 const { isAuthenticated } = require('./utils/auth/auth');
 const { AuthDirective } = require('./gql/directives/AuthDirective');
 
+const pubsub =  require('./gql/subscriptions/pubsub');
+
 
 const { SECRET } =  require('./configs/secrets');
 
@@ -17,7 +19,7 @@ const { UserAPI } = require('./gql/datasources/users')
 const { RoomsAPI } = require('./gql/datasources/rooms')
 
 const  {importSchema} = require('graphql-import');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer, } = require('apollo-server-express');
 const resolvers = require('./gql/resolvers');
 const logger = require('./utils/logging').log(module);
 
@@ -32,6 +34,9 @@ app.use(cookieSession(
 ));
 
 
+
+
+
 const  corsOptions = {
     origin: ['http://localhost:3001/', 'http:localhost:3000'],
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -39,6 +44,7 @@ const  corsOptions = {
     credentials : true,
     allowedHeaders : ['Content-Type', 'Authorization','Set-Cookie','Cookie',]
   }
+
 
 const gqlServer  = new ApolloServer({
     cors: corsOptions,
@@ -66,15 +72,27 @@ const gqlServer  = new ApolloServer({
         }
         return {req};
         
+    },
+    subscriptions: {
+        onConnect: (connectionParams, webSocket, context) => {
+            logger.info('Subscription OnConnect Fired');
+            logger.debug(connectionParams);
+            logger.debug(webSocket);
+        },
+        onDisconnect: (webSocket, context) => {
+            logger.info('WebSocket Disconnected');
+            logger.debug(webSocket);
+        }
     }
     
 });
+
 
 gqlServer.applyMiddleware({app, path: '/gql' , cors:true});
 
 const server = http.createServer(app);
 
-
+gqlServer.installSubscriptionHandlers(server);
 
 // app.use(cors());
 app.use(express.static(__dirname+'/node_modules/'));
@@ -118,6 +136,7 @@ app.get('/', ( req, res, next ) => {
 // })
 
 
-server.listen(3001, function() { 
-    logger.info('Server started');
-})
+server.listen(3001, () => {
+    console.log(`🚀 Server ready at http://localhost:${3001}${gqlServer.graphqlPath}`)
+    console.log(`🚀 Subscriptions ready at ws://localhost:${3001}${gqlServer.subscriptionsPath}`)
+  })

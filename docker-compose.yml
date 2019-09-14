@@ -17,6 +17,17 @@ services:
     restart: unless-stopped
     ports:
       - 3002:8080
+  chat-mq:
+    image: rabbitmq:3
+    hostname: chat-mq
+    restart:  unless-stopped
+    ports:
+      - 30013:5672
+  rbmq-manager:
+    image:  rabbitmq:3-management
+    restart:  unless-stopped
+    ports:
+      - 30014:15672
 
 volumes:
   pgData:

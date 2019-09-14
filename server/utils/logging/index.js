@@ -7,8 +7,6 @@ const util = require('util');
 const { combine, timestamp, simple, prettyPrint , colorize, printf , label } = format;
 
 
-
-
 winston.addColors({
     info: 'bold white greenBG',
     error: 'bold white redBG',
@@ -56,10 +54,11 @@ const wrappedLogger = (_module) => {
         // ]
     }
     
+    
     const logger = createLogger({
         ...loggerOptions,
-        
     });
+
 
     if(process.env.NODE_ENV !== 'production'){
         logger.level = 'debug'
@@ -67,7 +66,7 @@ const wrappedLogger = (_module) => {
         logger.level =  'info'
     }
     
-
+    
     return logger;
     
 }

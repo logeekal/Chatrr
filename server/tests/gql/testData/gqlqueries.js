@@ -12,14 +12,12 @@ const getRoomsQuery = `query getRooms{
   }`
 
 
-  const getUser = (userName) => `query getUser{
+  const getPublicUserDetails = (userName) => `query getUser{
     user(userName : "${userName}") {
       id
       userName
       avatar
       gender
-      ip
-      location
       connected
       loggedIn
       createdAt
@@ -88,7 +86,7 @@ query getRoomConvo {
   module.exports = {
     getRoomsQuery,
     getUserConversations,
-    getUser,
+    getPublicUserDetails,
     getRoomConversations,
     getRoomUsers
   }
