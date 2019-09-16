@@ -3,6 +3,7 @@ const cors = require('cors');
 const socket= require('socket.io');
 const http =  require('http');
 const cookieSession = require('cookie-session');
+const Cookies = require('cookies');
 
 const expressSession = require('express-session');
 
@@ -62,26 +63,31 @@ const gqlServer  = new ApolloServer({
     },
     
     context: ({req}) => {
-        // console.log('Session.....');
-        // // console.log(req);
-        // // 
-        // console.log(req.session);
-        if(!req.session){
-            // logger.debug(req.session)
-            throw('Cookie not working fine.')
-        }
+        console.log('Session.....');
+        // console.log(req);
+        // 
+        console.log(req.session);
+        // if(!req.session){
+        //     // logger.debug(req.session)
+        //     throw('Cookie not working fine.')
+        // }
         return {req};
         
     },
     subscriptions: {
         onConnect: (connectionParams, webSocket, context) => {
-            logger.info('Subscription OnConnect Fired');
-            logger.debug(connectionParams);
-            logger.debug(webSocket);
+            logger.info('Subscription OnConnect Fired'); 
+            const existingCookie =  new Cookies(webSocket.upgradeReq, null, {});
+            // logger.debug(existingCookie)
+            const existingsession  =  JSON.parse(Buffer.from(existingCookie.get('userCookie'), 'base64').toString())
+            context['req'] = {}
+            context.req['session'] = existingsession;
+            logger.debug('WebSocket Session : ');
+            logger.debug(context.req.session);
+            return context.req;
         },
         onDisconnect: (webSocket, context) => {
             logger.info('WebSocket Disconnected');
-            logger.debug(webSocket);
         }
     }
     

@@ -122,13 +122,25 @@ type ConversationTrail {
     receivedConversations: [Conversations]
 }
 
+type UserName {
+    userName: String!
+}
 
-type Subsription {
+
+type Subscription {
     """
     newUserInRoom is subsriptions which notifies the client when a new user joins a Room
     """
-    newUserInRoom(roomId : String!) : User
+    newUserInRoom(roomId: String!) : User!
 
-    newChatMessageToUser(userName: String!) : ConversationTrail
+    newUserLeftRoom(roomId: String!) : User!
+
+    newLogin: User!
+
+    newLogout: UserName!
+
+    newChatMessageToUser(userName: String!) : Conversations!
+
+    newChatMessageInRoom(roomId: String!) : Conversations!
 
 }

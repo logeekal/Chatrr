@@ -17,17 +17,17 @@ services:
     restart: unless-stopped
     ports:
       - 3002:8080
-  chat-mq:
-    image: rabbitmq:3
-    hostname: chat-mq
+  chatmq:
+    image: rabbitmq:3-management
+    hostname: chatmq
+    environment:
+      - "RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,debug},{queue,debug},{channel,debug}]"
     restart:  unless-stopped
     ports:
       - 30013:5672
-  rbmq-manager:
-    image:  rabbitmq:3-management
-    restart:  unless-stopped
-    ports:
       - 30014:15672
-
+    volumes:
+      - chatmqData:/data
 volumes:
   pgData:
+  chatmqData:  

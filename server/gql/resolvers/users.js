@@ -238,5 +238,21 @@ module.exports = {
         addUserToRoom: addUserToRoom,
         removeUserFromRoom: userUpdateResolversFactory('removeUserFromRoom'),
         sendConversation: sendConversation,
+    },
+    Subscription: {
+        newLogin :{
+            resolve: (payload) => {
+                logger.debug(`In Resolve for Subsription. Payload is : `);
+                logger.debug(payload)
+                return {
+                    payload
+                }
+            },
+            subscribe:  () => pubsub.asyncIterator([NEW_LOGIN])
+        },
+    
+        newLogout: {
+            subscribe: () => pubsub.asyncIterator([NEW_LOGOUT])
+        }
     }
 }

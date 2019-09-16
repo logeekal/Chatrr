@@ -42,6 +42,9 @@ const init = () => {
                 //     // If exists, shoud be pass to rabbitmq server
                 // },
             },
+            // triggerTransform: (trigger, {path}) => {
+            //     [trigger,...path].join('.');
+            // },
             connectionListener: (err) =>{
                 if(err){
                     logger.error(`Cannot connect to RabbitMQ Server @ ${process.env.MQ_HOST}: ${process.env.MQ_PORT}`);
