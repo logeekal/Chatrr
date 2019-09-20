@@ -568,12 +568,13 @@ describe("User Behaviour Tests", function() {
 
 describe("Logging out users.. so that next tests can be carried out.", () => {
   it("All User Logging Out.", done => {
-    request
+    requestUser[0]
       .post(endpoint)
       .send({ query: logoutMutationUser1 })
       .end((err, res) => {
+        //  logger.debug(JSON.stringify(res));
         let response = res.body.data.logoutUser;
-        // logger.debug(response);
+       
         chai.assert.strictEqual(
           res.status,
           200,
@@ -592,7 +593,7 @@ describe("Logging out users.. so that next tests can be carried out.", () => {
       });
   });
   it("User2 Logging Out.", done => {
-    request
+    requestUser[1]
       .post(endpoint)
       .send({ query: logoutMutationUser2 })
       .end((err, res) => {
@@ -621,6 +622,7 @@ describe("Room behaviour tests", function() {
   let rooms = [];
   let users = [user1, user2];
   let times = [];
+  let requests = [require("supertest").agent(url), require("supertest").agent(url)];
   before(async function() {
     // logger.debug('Getting all the available Rooms before tests start');
     let response;
@@ -631,23 +633,26 @@ describe("Room behaviour tests", function() {
       // });
       // logger.debug('Making sure users are connected and loggedIn');
       for (let idx in users) {
-        await requestUser[idx].post(endpoint).send({
+        
+        response = await requests[idx].post(endpoint).send({
           query: loginUserMutation(users[idx].userName, users[idx].gender)
         });
-
-        response = await requestUser[idx].post(endpoint).send({ query: getRoomsQuery });
+        // logger.debug(JSON.stringify(response));
+        response = await requests[idx].post(endpoint).send({ query: getRoomsQuery });
         rooms = response.body.data.rooms;
 
-        await requestUser[idx].post(endpoint).send({
+        await requests[idx].post(endpoint).send({
           query: addUserToRoomMutation(users[idx].userName, rooms[0].id)
         });
+
+        
         // logger.debug(`Adding user in room : ${users[idx].userName}`);
     }
  
 
     // Sending first conversation and recording its time.
     times.push(Date.now());
-    await requestUser[0].post(endpoint).send({
+    await requests[0].post(endpoint).send({
       query: sendConversation(
         user1.userName,
         rooms[0].id,
@@ -657,7 +662,7 @@ describe("Room behaviour tests", function() {
     });
 
     times.push(Date.now());
-    await requestUser[1].post(endpoint).send({
+    await requests[1].post(endpoint).send({
       query: sendConversation(
         user2.userName,
         rooms[0].id,
@@ -677,13 +682,13 @@ describe("Room behaviour tests", function() {
 
     // logging out users
     for (let idx in users){
-      await requestUser[idx]
+      await requests[idx]
             .post(endpoint)
             .send({query : logoutUserMutation(users[idx].userName) });  
     }
   });
   it("Get Room Members", function(done) {
-    requestUser[0]
+    requests[0]
       .post(endpoint)
       .send({ query: getRoomUsers(rooms[0].id) })
       .end((err, res) => {
@@ -711,7 +716,7 @@ describe("Room behaviour tests", function() {
 
   it("Get  room Conversations based on time. ", async function() {
     // logger.debug(times);
-    let res = await requestUser[0]
+    let res = await requests[0]
       .post(endpoint)
 
       .send({ query: getRoomConversations(rooms[0].id, (times[1]).toString()) });
