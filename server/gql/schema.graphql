@@ -10,7 +10,7 @@ enum Role {
 type Query {
     userList: [User]  #####
     user(userName: String!): User
-    getUserConversations(userName: String!): ConversationTrail!
+    getUserConversations: ConversationTrail!
     # isloggedIn(userName: String!): Boolean
     
     roomUsers(roomId: ID!):[User]
@@ -84,7 +84,7 @@ type Mutation {
     Need to update the username to something else on Logout...
     So that another user can login with same username.
     """    
-    logoutUser (userName: String!): GenericResponse!
+    logoutUser: GenericResponse!
 
     """
     When a user first time joins a room. There is not way to exit all t
@@ -93,20 +93,20 @@ type Mutation {
     Rooms are kind of groups where anyone can enter and chat each other \
     personally and collaboratively."
     """
-    addUserToRoom (userName: String!, roomId: String!): GenericResponse! @auth(requires: USER)
+    addUserToRoom (roomId: String!): GenericResponse! @auth(requires: USER)
 
     """
     sendConversation mutation helps system to send message from one entity to another entity, these entity can be 
     """
-    sendConversation(userName: String, to: String!, toType: String!, text: String!) : GenericResponse! @auth(requires: USER)
+    sendConversation(to: String!, toType: String!, text: String!) : GenericResponse! @auth(requires: USER)
 
-    removeUserFromRoom(userName: String!): GenericResponse! @auth(requires: USER)
+    removeUserFromRoom: GenericResponse! @auth(requires: USER)
 
-    updateConnectedStatus(userName: String!, status: Boolean!) : GenericResponse! @auth(requires: USER)
+    updateConnectedStatus(status: Boolean!) : GenericResponse!
 }
 
 type GenericResponse {
-    success: Boolean!
+    success: Boolean
     error: String
 }
 
