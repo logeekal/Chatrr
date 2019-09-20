@@ -1,11 +1,13 @@
 const chai = require("chai");
+const { assertGraphQLError } = require('./utils/index');
+const {error_codes} = require('../../configs/error_codes');
+
 const url = "http://localhost:3001";
 
 const request = require("supertest").agent(url);
 const requestUser = [];
 requestUser[0] = require("supertest").agent(url);
 requestUser[1] = require("supertest").agent(url);
-const { error_codes } = require("../../configs/error_codes");
 const logger =  require('../../utils/logging').log(module);
 
 const endpoint = "/gql";
@@ -36,6 +38,8 @@ const {
   convUser2ToRoom1,
   convUser1ToUser2,
 } = require("./testData/gqlTestData");
+
+
 
 describe("User Behaviour Tests", function() {
   this.timeout(4000);
@@ -93,57 +97,31 @@ describe("User Behaviour Tests", function() {
       // });
   });
 
-  // it("Users Logging In", done => {
-  //   const loginMutation = loginMutationUser1;
-  //   request
-  //     .post(endpoint)
-  //     .send({ query: loginMutation })
-  //     .end((err, res) => {
-  //       // res should contain success and Error
-  //       // logger.debug(err);
-  //       // logger.debug(res);
-  //       let response = res.body.data.loginUser;
-  //       // logger.debug(response);
-  //       chai.assert.strictEqual(
-  //         res.status,
-  //         200,
-  //         "Status of request does not match"
-  //       );
-  //       chai
-  //         .expect(Object.keys(response))
-  //         .to.have.members(["success", "error"]);
-  //       chai.assert.strictEqual(
-  //         response.success,
-  //         true,
-  //         "Success message does not match."
-  //       );
-  //       chai.expect(response.error).to.be.null;
-  //       done();
-  //     });
-  // });
-
   it("Another user with Same Username should fail", done => {
     requestUser[1]
       .post(endpoint)
       .send({ query: loginMutationUser1 })
       .end((err, res) => {
         if (err) {
+          logger.debug(err)
           done(err);
         }
-        let response = res.body.data.loginUser;
+        logger.debug(JSON.stringify(res.body));
         chai.assert.strictEqual(
           res.status,
           200,
           "Status of request does not match"
         );
-        // logger.debug(res.body);
+        
         chai.expect(res.body).to.have.keys(["data", "errors"]);
-        chai.expect(response).to.have.keys(["success", "error"]);
-        chai.assert.strictEqual(
-          response.success,
-          false,
-          "Success values is not matching."
-        );
+        logger.debug(res.body.data);
+        chai.expect(res.body.data).be.null;
+        // chai.expect(res.body.).to.have.keys(["success", "error"]);
+        // chai.assert.strictEqual(
+        //   response.success,
+        //   false,
+        //   "Success values is not matching."
+        // );
         done();
       });
   });
@@ -257,7 +235,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          logger.debug(response);
+          logger.debug(JSON.stringify(response));
           chai.expect(response).to.to.have.keys(["data"]);
           chai
             .expect(response.data.sendConversation)
@@ -490,20 +468,22 @@ describe("User Behaviour Tests", function() {
         } else {
           let response = res.body;
           // logger.debug(response);
-          chai.expect(response).to.have.keys(["data"]);
-          chai
-            .expect(response.data.sendConversation)
-            .to.have.keys(["success", "error"]);
-          chai.assert.strictEqual(
-            response.data.sendConversation.success,
-            false,
-            "Sucess message does not match"
-          );
-          chai.assert.strictEqual(
-            response.data.sendConversation.error,
-            error_codes.WRONG_TO_TYPE.message,
-            "Error message does not match"
-          );
+          chai.expect(response).to.have.keys(["data","errors"]);
+          chai.expect(response.data).be.null;
+          assertGraphQLError(res, error_codes.WRONG_TO_TYPE)
+          // chai
+          //   .expect(response.data.sendConversation)
+          //   .to.have.keys(["success", "error"]);
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.success,
+          //   false,
+          //   "Sucess message does not match"
+          // );
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.error,
+          //   error_codes.WRONG_TO_TYPE.message,
+          //   "Error message does not match"
+          // );
           done();
         }
       });
@@ -526,20 +506,22 @@ describe("User Behaviour Tests", function() {
         } else {
           let response = res.body;
           // logger.debug(response);
-          chai.expect(response).to.to.have.keys(["data"]);
-          chai
-            .expect(response.data.sendConversation)
-            .to.have.keys(["success", "error"]);
-          chai.assert.strictEqual(
-            response.data.sendConversation.success,
-            false,
-            "Sucess message does not match"
-          );
-          chai.assert.strictEqual(
-            response.data.sendConversation.error,
-            error_codes.RECIPIENT_DISCONNECTED.message,
-            "Error message does not match"
-          );
+          chai.expect(response).to.to.have.keys(["data","errors"]);
+          chai.expect(response.data).be.null;
+          assertGraphQLError(res, error_codes.RECIPIENT_DISCONNECTED)
+          // chai
+          //   .expect(response.data.sendConversation)
+          //   .to.have.keys(["success", "error"]);
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.success,
+          //   false,
+          //   "Sucess message does not match"
+          // );
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.error,
+          //   error_codes.RECIPIENT_DISCONNECTED.message,
+          //   "Error message does not match"
+          // );
           done();
         }
       });
@@ -561,21 +543,23 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          logger.debug(response);
-          chai.expect(response).to.to.have.keys(["data"]);
-          chai
-            .expect(response.data.sendConversation)
-            .to.have.keys(["success", "error"]);
-          chai.assert.strictEqual(
-            response.data.sendConversation.success,
-            false,
-            "Sucess message does not match"
-          );
-          chai.assert.strictEqual(
-            response.data.sendConversation.error,
-            error_codes.SENDER_DISCONNECTED.message,
-            "Error message does not match"
-          );
+          logger.debug(JSON.stringify(response));
+          chai.expect(response).to.to.have.keys(["data","errors"]);
+          chai.expect(response.data).be.null;
+          assertGraphQLError(res, error_codes.SENDER_DISCONNECTED)
+          // chai
+          //   .expect(response.data.sendConversation)
+          //   .to.have.keys(["success", "error"]);
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.success,
+          //   false,
+          //   "Sucess message does not match"
+          // );
+          // chai.assert.strictEqual(
+          //   response.data.sendConversation.error,
+          //   error_codes.SENDER_DISCONNECTED.message,
+          //   "Error message does not match"
+          // );
           done();
         }
       });

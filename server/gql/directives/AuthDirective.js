@@ -1,6 +1,8 @@
 const { ApolloServer, SchemaDirectiveVisitor, gql } = require("apollo-server");
 const { defaultFieldResolver } = require("graphql");
 const logger = require('../../utils/logging').log(module);
+const  { isAuthenticated } = require('../../utils/auth/auth');
+
 
 class AuthDirective extends SchemaDirectiveVisitor {
   visitObject(type) {
@@ -45,7 +47,8 @@ class AuthDirective extends SchemaDirectiveVisitor {
         }
 
         const context = args[2];
-        const user = context.req.session.user;
+
+        const user = isAuthenticated(context);
 
         if (!user) {
           logger.debug("user is not auth");

@@ -10,7 +10,12 @@ const error_codes = {
     WRONG_TO_TYPE: {
         name: "WRONG_TO_TYPE",
         message: "Wrong value supplied for To Type"
-    }
+    },
+    NO_RECORD_ERROR: ( filters ) => {
+        return {
+        name: "NO_RECORD_ERROR",
+        message: `No Record exists with fields :  ${ JSON.stringify(filters) }`
+    }}
 
 }
 
