@@ -142,67 +142,115 @@ const removeUserFromRoom = async (_, { userName, roomId }, { dataSources }) => {
 
 
 
-const userUpdateResolversFactory = (type) => {
-    return async (_, { userName }, context) => {
-        let { dataSources, req } = context;
-        let result;
-        let updateFields;
-        let filters = {
-            where: { userName: userName }
-        };
-        try {
-            switch (type) {
-                case 'logoutUser':
-                    logger.debug('LogOut Resolver triggered');
-                    // logger.debug('Removing user from the room.')
+// const userUpdateResolversFactory = (type) => {
+//     return async (_, { userName }, context) => {
+//         let { dataSources, req } = context;
+//         let result;
+//         let updateFields;
+//         let filters = {
+//             where: { userName: userName }
+//         };
+//         try {
+//             switch (type) {
+//                 case 'logoutUser':
+//                     logger.debug('LogOut Resolver triggered');
+//                     // logger.debug('Removing user from the room.')
 
-                    // updateFields = {
-                    //     roomId : null
-                    // };
+//                     // updateFields = {
+//                     //     roomId : null
+//                     // };
 
-                    // await dataSources.userAPI.update(updateFields, filters);
-                    logger.debug('Removed user from the room. Now logging user out.')
+//                     // await dataSources.userAPI.update(updateFields, filters);
+//                     logger.debug('Removed user from the room. Now logging user out.')
 
-                    updateFields = {
-                        loggedIn: false,
-                        connected: false,
-                        roomId: null,
-                        userName: userName + '_' + Date.now()
-                    };
+//                     updateFields = {
+//                         loggedIn: false,
+//                         connected: false,
+//                         roomId: null,
+//                         userName: userName + '_' + Date.now()
+//                     };
 
-                    break;
-                case 'removeUserFromRoom':
-                    logger.debug('Removing User from Room.');
-                    updateFields = {
-                        roomId: false
-                    };
-                    break;
-                default:
-                    result = ""
-            }
-            logout(context);
-            result = await dataSources.userAPI.update(updateFields, filters);
-            if (result[0] > 0) {
-                pubsub.publish(NEW_LOGOUT.topic, {
-                    [NEW_LOGOUT.subscription]: {
-                        userName: userName
-                    }
-                });
-                return {
-                    success: true,
-                    error: null
-                }
-            } else {
+//                     break;
+//                 case 'removeUserFromRoom':
+//                     logger.debug('Removing User from Room.');
+//                     updateFields = {
+//                         roomId: false
+//                     };
+//                     break;
+//                 default:
+//                     result = ""
+//             }
+//             logout(context);
+//             result = await dataSources.userAPI.update(updateFields, filters);
+//             if (result[0] > 0) {
+//                 pubsub.publish(NEW_LOGOUT.topic, {
+//                     [NEW_LOGOUT.subscription]: {
+//                         userName: userName
+//                     }
+//                 });
+//                 return {
+//                     success: true,
+//                     error: null
+//                 }
+//             } else {
 
-                logger.debug('Throwing Error');
-                throw error_codes.NO_RECORD_ERROR(filters)
-            }
+//                 logger.debug('Throwing Error');
+//                 throw error_codes.NO_RECORD_ERROR(filters)
+//             }
 
-        } catch (err) {
-            logger.debug(`Error in Update Resolver Factory`);
-            logger.error(err)
-            throwError(err)
+//         } catch (err) {
+//             logger.debug(`Error in Update Resolver Factory`);
+//             logger.error(err)
+//             throwError(err)
+//         }
+//     }
+// }
+
+
+const logoutUser = async (_, { userName }, context) => {
+    const currentUser =  isAuthenticated(context);
+    const {dataSources} = context;
+    logger.debug('Logging out user : ');
+    logger.debug(currentUser);
+    logger.debug(currentUser.userName);
+    
+    let currUserName = currentUser['userName']
+    
+    let filters = {
+        where: {
+            userName: currUserName
         }
+
+    };
+
+    let updateFields = {
+        connected: false,
+        loggedIn: false,
+        roomId: null,
+        userName: currUserName + '_' + Date.now()
+    };
+
+    try {
+        let result = await dataSources.userAPI.update(updateFields, filters);
+        if (result[0] > 0){
+            logout(context);
+            pubsub.publish(NEW_LOGOUT.topic, {
+                                    [NEW_LOGOUT.subscription]: {
+                                        userName: userName
+                                    }
+                                });
+            return {
+                success: true,
+                error: null
+            }
+        }else{
+            throw error_codes.NO_RECORD_ERROR(filters);
+        }
+        
+    } catch (err) {
+        logger.debug('Error in Updated Connected Status');
+        logger.error(err)
+        throwError(err)
     }
 }
 
@@ -313,7 +361,7 @@ module.exports = {
     },
     Mutation: {
         loginUser: loginUser,
-        logoutUser: userUpdateResolversFactory('logoutUser'),
+        logoutUser: logoutUser,
         updateConnectedStatus: updateConnectedStatus,
         addUserToRoom: addUserToRoom,
         removeUserFromRoom: removeUserFromRoom,
