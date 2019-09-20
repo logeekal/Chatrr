@@ -55,11 +55,7 @@ class UserAPI extends DataSource {
 
 
     async getUser(filter) {
-        let result = this.store.Users.findAll({
-            where: {
-                userName: userName
-            }
-        });
+        let result = this.store.Users.findAll(filter);
 
         if (!result) {
             logger.debug('Erro while fetching the user.');
