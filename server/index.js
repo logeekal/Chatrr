@@ -8,6 +8,8 @@ const Cookies = require('cookies');
 const expressSession = require('express-session');
 
 const { isAuthenticated } = require('./utils/auth/auth');
+const  { formatApolloError } = require('./utils/apollo');
+
 const { AuthDirective } = require('./gql/directives/AuthDirective');
 
 const pubsub =  require('./gql/resolvers/subscriptions/pubsub');
@@ -55,7 +57,8 @@ const gqlServer  = new ApolloServer({
     schemaDirectives :{
         auth: AuthDirective
     },
-    debug: process.env.NODE_ENV === 'production',
+    debug: process.env.NODE_ENV !== 'production',
+    formatError: formatApolloError, 
     dataSources: () => ({
         userAPI: new UserAPI({ store }),
         roomsAPI: new RoomsAPI({ store })
