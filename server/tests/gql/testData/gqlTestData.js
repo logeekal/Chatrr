@@ -55,21 +55,21 @@ const loginMutationUser2 = `mutation login { loginUser(userName: "${ user2.userN
 }`;
 
 
-const logoutMutationUser1 = `mutation logout { logoutUser(userName: "${ user1.userName }"){ \
+const logoutMutationUser1 = `mutation logout { logoutUser { \
     success \
     error \
   }  \
 }`;
 
 
-const logoutMutationUser2 = `mutation logout { logoutUser(userName: "${ user2.userName }"){ \
+const logoutMutationUser2 = `mutation logout { logoutUser { \
     success \
     error \
   }  \
 }`;
 
 const addUser1ToRoom1Mutation =`mutation addUser {
-    addUserToRoom(userName: "${ user1.userName } ")
+    addUserToRoom
 }`
 
 

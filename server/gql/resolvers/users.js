@@ -24,7 +24,7 @@ const getCurrentUser = async (context) => {
 }
 
 
-const throwError =  (errorObject) => {
+const throwError = (errorObject) => {
     throw new ApolloError(errorObject.message, errorObject.name)
 }
 
@@ -50,13 +50,17 @@ const loginUser = async (_, userObject, context) => {
         }
     } catch (err) {
         logger.debug('Error while logging in ');
-        throwError (err)
+        throwError(err)
     }
 }
 
 
-const addUserToRoom = async (_, { userName, roomId }, { dataSources }) => {
+const addUserToRoom = async (_, { roomId }, context) => {
+    let { dataSources } = context
     try {
+
+        let userName = isAuthenticated(context).userName
+
         let updateFields = {
             roomId: roomId
         };
@@ -88,7 +92,7 @@ const addUserToRoom = async (_, { userName, roomId }, { dataSources }) => {
                 error: null
             }
         } else {
-            
+
             throw error_codes.NO_RECORD_ERROR(filters)
         }
         // return getUpdateResponseBasedOnResult(
@@ -105,7 +109,9 @@ const addUserToRoom = async (_, { userName, roomId }, { dataSources }) => {
 }
 
 
-const removeUserFromRoom = async (_, { userName, roomId }, { dataSources }) => {
+const removeUserFromRoom = async (_, { }, context) => {
+    const { dataSources } = context;
+    let { userName } = isAuthenticated(context);
     try {
         let updateFields = {
             roomId: null
@@ -207,15 +213,13 @@ const removeUserFromRoom = async (_, { userName, roomId }, { dataSources }) => {
 // }
 
 
-const logoutUser = async (_, { userName }, context) => {
-    const currentUser =  isAuthenticated(context);
-    const {dataSources} = context;
+const logoutUser = async (_, { }, context) => {
+    const currentUser = isAuthenticated(context);
+    const { dataSources } = context;
     logger.debug('Logging out user : ');
     logger.debug(currentUser);
-    logger.debug(currentUser.userName);
-    
-    let currUserName = currentUser['userName']
-    
+    let currUserName = currentUser.userName
+
     let filters = {
         where: {
             userName: currUserName
@@ -232,21 +236,21 @@ const logoutUser = async (_, { userName }, context) => {
 
     try {
         let result = await dataSources.userAPI.update(updateFields, filters);
-        if (result[0] > 0){
+        if (result[0] > 0) {
             logout(context);
             pubsub.publish(NEW_LOGOUT.topic, {
-                                    [NEW_LOGOUT.subscription]: {
-                                        userName: userName
-                                    }
-                                });
+                [NEW_LOGOUT.subscription]: {
+                    userName: currUserName
+                }
+            });
             return {
                 success: true,
                 error: null
             }
-        }else{
+        } else {
             throw error_codes.NO_RECORD_ERROR(filters);
         }
-        
+
     } catch (err) {
         logger.debug('Error in Updated Connected Status');
         logger.error(err)
@@ -272,7 +276,7 @@ const getUser = async (_, { userName }, context) => {
 }
 
 
-const getUserConversations = async (_, { userName }, context) => {
+const getUserConversations = async (_, { }, context) => {
     let { dataSources, req } = context;
 
     let currentUser = await getCurrentUser(context);
@@ -283,7 +287,7 @@ const getUserConversations = async (_, { userName }, context) => {
 }
 
 
-const sendConversation = async (_, { userName, to, toType, text }, context) => {
+const sendConversation = async (_, { to, toType, text }, context) => {
     logger.debug('In Send Conversation resolver');
     const { dataSources, req } = context;
 
@@ -323,7 +327,12 @@ const sendConversation = async (_, { userName, to, toType, text }, context) => {
     }
 }
 
-const updateConnectedStatus = async (_, { userName, status }, { dataSources }) => {
+const updateConnectedStatus = async (_, { status }, context) => {
+    logger.debug(`Updating the connected status to`);
+    const { dataSources } = context;
+    
+    let { userName } = isAuthenticated(context);
+    logger.debug(userName);
     let filters = {
         where: {
             userName: userName
@@ -339,15 +348,15 @@ const updateConnectedStatus = async (_, { userName, status }, { dataSources }) =
 
     try {
         let result = await dataSources.userAPI.update(updateFields, filters);
-        if (result[0] > 0){
+        if (result[0] > 0) {
             return {
                 success: true,
                 error: null
             }
-        }else{
+        } else {
             throw error_codes.NO_RECORD_ERROR(filters);
         }
-        
+
     } catch (err) {
         logger.debug('Error in Updated Connected Status');
         logger.error(err)

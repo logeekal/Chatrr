@@ -1,6 +1,6 @@
 const addUserToRoomMutation = ( userName, roomId ) => {
     let mutation = ` mutation addUserToRoom {
-        addUserToRoom(userName : "${userName}", roomId: "${roomId}" ){
+        addUserToRoom(roomId: "${roomId}" ){
             success
             error
         }
@@ -11,7 +11,7 @@ const addUserToRoomMutation = ( userName, roomId ) => {
 
 const sendConversation = (fromUser, to, toType, text) => {
     let mutation = ` mutation send {
-        sendConversation(userName: "${ fromUser }", to: "${ to }", toType: "${ toType }", text: "${ text }" ){
+        sendConversation(to: "${ to }", toType: "${ toType }", text: "${ text }" ){
             success
             error
         }
@@ -23,7 +23,7 @@ const sendConversation = (fromUser, to, toType, text) => {
 
 const updateConnectedStatus = (userName, status) => {
     let mutation = `mutation updateConnStatus {
-        updateConnectedStatus(userName: "${userName}", status: ${status}){
+        updateConnectedStatus(status:${status}) {
             success
             error
         }
@@ -40,7 +40,7 @@ const loginUserMutation = (userName, gender) => `mutation login { loginUser(user
   }  \
 }`;
 
-const logoutUserMutation = (userName) => `mutation logout { logoutUser(userName: "${ userName }"){ \
+const logoutUserMutation = (userName) => `mutation logout { logoutUser { \
     success \
     error \
   }  \
