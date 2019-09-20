@@ -10,7 +10,7 @@ const expressSession = require('express-session');
 const { isAuthenticated } = require('./utils/auth/auth');
 const { AuthDirective } = require('./gql/directives/AuthDirective');
 
-const pubsub =  require('./gql/subscriptions/pubsub');
+const pubsub =  require('./gql/resolvers/subscriptions/pubsub');
 
 
 const { SECRET } =  require('./configs/secrets');
@@ -39,13 +39,14 @@ app.use(cookieSession(
 
 
 const  corsOptions = {
-    origin: ['http://localhost:3001/', 'http:localhost:3000'],
+    // origin: ['http://localhost:3001/', 'http:localhost:3000',*],
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
     methods :  ['GET', 'PUT', 'POST','OPTIONS'],
     credentials : true,
     allowedHeaders : ['Content-Type', 'Authorization','Set-Cookie','Cookie',]
   }
 
+//   app.use(cors(corsOptions));
 
 const gqlServer  = new ApolloServer({
     cors: corsOptions,
@@ -54,6 +55,7 @@ const gqlServer  = new ApolloServer({
     schemaDirectives :{
         auth: AuthDirective
     },
+    debug: process.env.NODE_ENV === 'production',
     dataSources: () => ({
         userAPI: new UserAPI({ store }),
         roomsAPI: new RoomsAPI({ store })
@@ -62,29 +64,52 @@ const gqlServer  = new ApolloServer({
         'request.credentials': 'include'
     },
     
-    context: ({req}) => {
-        console.log('Session.....');
-        // console.log(req);
-        // 
-        console.log(req.session);
-        // if(!req.session){
-        //     // logger.debug(req.session)
-        //     throw('Cookie not working fine.')
-        // }
-        return {req};
+    context: ({req, connection}) => {
+        if(connection){
+            return connection.context;
+        }else{
+            console.log('Session.....');
+            console.log(req.header('origin'));
+            
+            // if(!req.session){
+            //     const existingCookie =  new Cookies(webSocket.upgradeReq, null, {});
+            //     // logger.debug(existingCookie)
+            //     const existingsession  =  JSON.parse(Buffer.from(existingCookie.get('userCookie'), 'base64').toString())
+            //     console.log(existingsession);
+            // }
+            // 
+            // console.log(req.session);
+            // if(!req.session){
+            //     // logger.debug(req.session)
+            //     throw('Cookie not working fine.')
+            // }
+            console.log(req.session);
+            return {req};
+        }
+        
         
     },
+
     subscriptions: {
-        onConnect: (connectionParams, webSocket, context) => {
+        onConnect: (connectionParams, webSocket) => {
             logger.info('Subscription OnConnect Fired'); 
+            logger.debug(connectionParams);
             const existingCookie =  new Cookies(webSocket.upgradeReq, null, {});
-            // logger.debug(existingCookie)
+            logger.debug(existingCookie);
+            if (connectionParams){
+                console.log(Buffer.from(connectionParams.headers.cookie,'base64').toString());
+            }
+
+           try
+           { 
             const existingsession  =  JSON.parse(Buffer.from(existingCookie.get('userCookie'), 'base64').toString())
-            context['req'] = {}
-            context.req['session'] = existingsession;
-            logger.debug('WebSocket Session : ');
-            logger.debug(context.req.session);
-            return context.req;
+            logger.debug(existingsession);
+            return {
+                currentUser: existingsession.user
+                }
+            }catch(err){
+                throw('Not Authorized');
+            }
         },
         onDisconnect: (webSocket, context) => {
             logger.info('WebSocket Disconnected');
@@ -94,7 +119,7 @@ const gqlServer  = new ApolloServer({
 });
 
 
-gqlServer.applyMiddleware({app, path: '/gql' , cors:true});
+gqlServer.applyMiddleware({app, path: '/gql' , cors:corsOptions});
 
 const server = http.createServer(app);
 

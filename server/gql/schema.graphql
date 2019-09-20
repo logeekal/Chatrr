@@ -131,7 +131,7 @@ type Subscription {
     """
     newUserInRoom is subsriptions which notifies the client when a new user joins a Room
     """
-    newUserInRoom(roomId: String!) : User!
+    newUserJoinedRoom(roomId: String!) : User!
 
     newUserLeftRoom(roomId: String!) : User!
 
@@ -139,8 +139,8 @@ type Subscription {
 
     newLogout: UserName!
 
-    newChatMessageToUser(userName: String!) : Conversations!
+    newChatMessageToUser: Conversations!
 
-    newChatMessageInRoom(roomId: String!) : Conversations!
+    newChatMessageToRoom(roomId: String!) : Conversations!
 
 }
