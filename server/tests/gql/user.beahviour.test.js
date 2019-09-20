@@ -467,7 +467,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // logger.debug(response);
+          logger.debug(response);
           chai.expect(response).to.have.keys(["data","errors"]);
           chai.expect(response.data).be.null;
           assertGraphQLError(res, error_codes.WRONG_TO_TYPE)
