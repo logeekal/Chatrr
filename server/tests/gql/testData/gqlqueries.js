@@ -26,7 +26,7 @@ const getRoomsQuery = `query getRooms{
 
 
   const getUserConversations = ( userName ) => `query getUserConversations {
-    getUserConversations(userName: "${userName}") {
+    getUserConversations {
         sentConversations {
         from
         toUser

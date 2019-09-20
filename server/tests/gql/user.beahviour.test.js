@@ -198,7 +198,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-             logger.debug(response);
+             logger.debug(JSON.stringify(response));
           chai.expect(response).to.have.keys(["data"]);
           chai.expect(response.data).to.have.keys(["addUserToRoom"]);
           chai
@@ -567,12 +567,12 @@ describe("User Behaviour Tests", function() {
 });
 
 describe("Logging out users.. so that next tests can be carried out.", () => {
-  it("All User Logging Out.", done => {
+  it("User1 Logging Out.", done => {
     requestUser[0]
       .post(endpoint)
       .send({ query: logoutMutationUser1 })
       .end((err, res) => {
-        //  logger.debug(JSON.stringify(res));
+        logger.debug(JSON.stringify(res));
         let response = res.body.data.logoutUser;
        
         chai.assert.strictEqual(
@@ -598,7 +598,7 @@ describe("Logging out users.. so that next tests can be carried out.", () => {
       .send({ query: logoutMutationUser2 })
       .end((err, res) => {
         let response = res.body.data.logoutUser;
-        // logger.debug(response);
+        logger.debug(response);
         chai.assert.strictEqual(
           res.status,
           200,
