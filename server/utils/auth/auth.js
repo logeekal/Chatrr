@@ -1,29 +1,33 @@
-const cookieSession = require('cookie-session');
-const {SECRET} = require('../../configs/secrets');
-const logger = require('../logging').log(module);
+const cookieSession = require("cookie-session");
+const { SECRET } = require("../../configs/secrets");
+const logger = require("../logging").log(module);
 
-const login = (req, user) => {
-    logger.debug('Setting Session Now');
+const login = (context, user) => {
+    const { req } = context;
+    logger.debug("Setting Session Now");
     req.session.user = user;
     req.session.save();
-}
+};
 
-const isAuthenticated = (req) => {
-    if (req.session.user) {
-        return req.session.user
-    }else{
-        throw Error('Not Authorized.');
+const isAuthenticated = context => {
+    logger.debug('Authenticating')
+    // console.log(context)
+    if ("currentUser" in context) {
+        return context.currentUser;
+    } else if (context.req) {
+        return context.req.session.user;
+    } else {
+        throw Error("Not Authorized.");
     }
-}
+};
 
-
-const logout = (req) => {
+const logout = context => {
+    const { req } = context;
     req.session = null;
-}
-
+};
 
 module.exports = {
     login,
     logout,
     isAuthenticated
-}
+};

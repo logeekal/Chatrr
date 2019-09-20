@@ -3,7 +3,7 @@ const { Model, Sequelize } = require('sequelize')
 const { error_codes } = require('../../configs/error_codes')
 const logger = require('../../utils/logging').log(module);
 class UserAPI extends DataSource {
-    constructor( {store} ) {
+    constructor({ store }) {
         super();
         this.store = store
     }
@@ -12,12 +12,12 @@ class UserAPI extends DataSource {
         this.context = config.context;
     }
 
-    
 
-    async find( filter) {
+
+    async find(filter) {
         logger.debug('Finding the user');
         logger.debug(filter)
-        const user= await this.store.Users.findOne( filter );
+        const user = await this.store.Users.findOne(filter);
         logger.debug(user)
         return user
     }
@@ -43,7 +43,7 @@ class UserAPI extends DataSource {
      * 
      * @param {string} userName userName which needs to be removed from the system.
      */
-    async update(fields,condition) {
+    async update(fields, condition) {
         logger.debug('Now updating');
         logger.debug(fields);
         logger.debug(condition)
@@ -56,66 +56,66 @@ class UserAPI extends DataSource {
 
     async getUser(filter) {
         let result = this.store.Users.findAll({
-            where : {
+            where: {
                 userName: userName
             }
         });
 
-        if(!result){
+        if (!result) {
             logger.debug('Erro while fetching the user.');
         }
         return result;
     }
 
 
-    async sendConversation({currentUser, to, toType, text}) {
+    async sendConversation({ currentUser, to, toType, text }) {
         logger.debug('Sending Conversations..');
         logger.debug(this.store.Users.associations);
 
-    let result;
-    logger.debug('Current User is : ');
-    logger.debug(currentUser)
-    if ((toType == 'ROOM') && (currentUser.loggedIn)){
+        let result;
+        logger.debug('Current User is : ');
+        logger.debug(currentUser)
+        if ((toType == 'ROOM') && (currentUser.loggedIn)) {
 
-        result =  await currentUser.createSentConversation({
-            toRoom: to,
-            toType: toType, 
-            text: text,
-            sent: true
-        });
-
-    }else if((toType == 'USER') &&  (currentUser.loggedIn) && currentUser.connected)  {
-        let recipient = await this.store.Users.findOne({
-            where : {
-                userName : to
-            }
-        });
-
-        if( recipient.loggedIn && recipient.connected){
             result = await currentUser.createSentConversation({
-                toUser: recipient.id,
-                toType: toType, 
+                toRoom: to,
+                toType: toType,
                 text: text,
                 sent: true
             });
-        }else{
-            throw error_codes.RECIPIENT_DISCONNECTED
+
+        } else if ((toType == 'USER') && (currentUser.loggedIn) && currentUser.connected) {
+            let recipient = await this.store.Users.findOne({
+                where: {
+                    userName: to
+                }
+            });
+
+            if (recipient.loggedIn && recipient.connected) {
+                result = await currentUser.createSentConversation({
+                    toUser: recipient.id,
+                    toType: toType,
+                    text: text,
+                    sent: true
+                });
+            } else {
+                throw error_codes.RECIPIENT_DISCONNECTED
+            }
+
+        } else if (toType !== 'USER' && toType !== 'ROOM') {
+            logger.debug(toType);
+            throw error_codes.WRONG_TO_TYPE
+
+        } else {
+            logger.debug('Sender is not online')
+            throw error_codes.SENDER_DISCONNECTED
         }
-        
-    }else if(toType !== 'USER' && toType !== 'ROOM' ){
-        logger.debug(toType);
-        throw error_codes.WRONG_TO_TYPE
-            
-    }else {
-        logger.debug('Sender is not online')
-        throw error_codes.SENDER_DISCONNECTED
-    }
-    
-   
+
+
         logger.debug("========================")
         logger.debug(result);
-        return result;
-        
+        return result.dataValues;
+
     }
 
 
@@ -133,10 +133,10 @@ class UserAPI extends DataSource {
         // Now we have got the user. Now getting the conversations.
         let orderClause = {
             order: [
-              'createdAt'
+                'createdAt'
             ]
-                        
-  }
+
+        }
         logger.debug('Getting Sent Conversations User');
         const sentConversations = await currentUser.getSentConversations(orderClause);
 
@@ -147,7 +147,7 @@ class UserAPI extends DataSource {
         return {
             sentConversations,
             receivedConversations
-            
+
         }
     }
 }

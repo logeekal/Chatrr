@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const { AmqpPubSub }  = require('graphql-rabbitmq-subscriptions');
-const logger = require('../../utils/logging').log(module);
+const logger = require('../../../utils/logging').log(module);
 const { createLogger } = require('bunyan');
 
 require('dotenv').config();
