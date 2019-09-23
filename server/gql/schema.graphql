@@ -15,8 +15,7 @@ type Query {
     
     roomUsers(roomId: ID!):[User]
     roomConversations(roomId: ID!, from: String!):[Conversations]
-    rooms: [Room]
-
+    rooms(roomId: ID): [Room]   
     # room(name: String!): Room ###
     # me: User ###   
 }
@@ -33,6 +32,9 @@ type User @auth(requires: USER){
     loggedIn: Boolean!
     createdAt: String!
     updatedAt: String!
+    room: Room
+    recievedConversations: [Conversations]
+    sentConversations: [Conversations]
 }
 
 
@@ -67,6 +69,8 @@ type Room @auth(requires: USER){
     active: Boolean
     createdAt: String
     updatedAt: String
+    users: [User]
+    roomConversations:  [Conversations]
 }
 
 

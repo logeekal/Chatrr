@@ -1,9 +1,9 @@
 const { DataSource } = require('apollo-datasource');
 const { Op } = require('sequelize');
-const logger =  require('../../utils/logging').log(module);
+const logger = require('../../utils/logging').log(module);
 
 class RoomsAPI extends DataSource {
-    constructor({store}) {
+    constructor({ store }) {
         super();
         this.store = store
     }
@@ -18,7 +18,7 @@ class RoomsAPI extends DataSource {
      * @param {object} roomObj Room object with all mandatory details.
      */
 
-    async createRoom (roomObj) {
+    async createRoom(roomObj) {
         let newRoom = await this.store.Rooms.create(roomObj);
         console.debug(newRoom);
         return newRoom;
@@ -30,11 +30,19 @@ class RoomsAPI extends DataSource {
      * whether they are active or Inactive.
      * 
      */
-    async getAllRooms () {
+    async getAllRooms() {
         let result = await this.store.Rooms.findAll({
             where: {
                 active: true,
             }
+        }, {
+            include: [{
+                model: this.store.Users
+            },
+            {
+                model: this.store.Conversations,
+                as: 'roomConversations'
+            }]
         });
         return result;
     }
@@ -44,17 +52,39 @@ class RoomsAPI extends DataSource {
      * This function returns all the rooms present in the system which have status as Active.
      * 
      */
-    async getAllActiveRooms() {
-        let result = await this.store.Rooms.findAll({
-            where:  {
+    async getAllActiveRooms(roomId) {
+        let filter = {
+            where: {
                 active: true
             }
-        })
-        logger.debug(result);
+        }
+        if(roomId){
+            logger.debug(`Getting room for Id : ${roomId}`);
+            filter = {
+                where: {
+                    active: true,
+                    id: roomId
+                }
+            }          
+        }else{
+            logger.debug(`Getting All Rooms`);
+        }
+
+        let result = await this.store.Rooms.findAll( {
+            ...filter,
+            include: [{
+                model: this.store.Users
+            },
+            {
+                model: this.store.Conversations,
+                as: 'roomConversations'
+            }]
+        });
+        logger.debug(JSON.stringify(result));
         return result;
     }
 
-    async removeRoom({name}) {
+    async removeRoom({ name }) {
         let result = await this.store.Rooms.destory({
             where: {
                 name: name
@@ -67,7 +97,7 @@ class RoomsAPI extends DataSource {
 
     async getRoomConversations(roomId, fromTime) {
         logger.debug('Now getting Conversations');
-        
+
         logger.debug(fromTime);
         let date = new Date(parseInt(fromTime));
         logger.debug(date);
@@ -81,16 +111,16 @@ class RoomsAPI extends DataSource {
         logger.debug(this.store.Users.associations);
         logger.debug(this.store.Conversations.associations);
         return await currRoom.getRoomConversations({
-            where : {
+            where: {
                 createdAt: {
-                    [Op.gte] : date
+                    [Op.gte]: date
                 }
             },
             order: ['createdAt'],
-            include:[{
+            include: [{
                 model: this.store.Users,
                 as: 'senders',
-                
+
                 //     where: {
                 //     loggedIn : true
 
@@ -110,20 +140,20 @@ class RoomsAPI extends DataSource {
     // }
 
     async getRoomUsers(roomId) {
-        let currRoom =  await this.store.Rooms.findOne({
+        let currRoom = await this.store.Rooms.findOne({
             where: {
                 id: roomId
             }
         })
 
         return await currRoom.getUsers({
-            where : {
+            where: {
                 loggedIn: true
             },
             order: ['userName'],
-            includes:{
+            includes: {
                 model: this.store.Rooms,
-                where:  {
+                where: {
                     id: roomId
                 }
             }
