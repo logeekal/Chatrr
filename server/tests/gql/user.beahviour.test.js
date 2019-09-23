@@ -42,7 +42,8 @@ const {
 
 
 describe("User Behaviour Tests", function() {
-  this.timeout(4000);
+  this.timeout(20000);
+
   before( async function() {
     logger.debug("Loggin out users now.");
     request
@@ -97,6 +98,14 @@ describe("User Behaviour Tests", function() {
       // });
   });
 
+  after( async function() {
+    let users = [user1,user2];
+    for (let idx in users){
+      await requestUser[idx]
+            .post(endpoint)
+            .send({query : logoutUserMutation(users[idx].userName) });  
+    }
+  })
   it("Another user with Same Username should fail", done => {
     requestUser[1]
       .post(endpoint)
@@ -154,7 +163,7 @@ describe("User Behaviour Tests", function() {
       });
   });
 
-  it("Get All Active Rooms", function(done) {
+  it("Get All Active Rooms when there are NO users", function(done) {
     requestUser[1]
       .post(endpoint)
       .send({ query: getRoomsQuery })
@@ -163,6 +172,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
+          logger.debug(JSON.stringify(response))
           chai.expect(response).to.have.keys(["data"]);
           chai.expect(response.data).to.have.keys(["rooms"]);
           chai.assert.isAtLeast(
@@ -180,9 +190,12 @@ describe("User Behaviour Tests", function() {
               "description",
               "active",
               "createdAt",
-              "updatedAt"
+              "updatedAt",
+              "users",
+              "roomConversations"
             ]);
-
+          chai.expect(response.data.rooms[0].users).to.be.of.length(0);
+          chai.expect(response.data.rooms[0].roomConversations).to.be.of.length(0);
           done();
         }
       });
@@ -214,6 +227,46 @@ describe("User Behaviour Tests", function() {
             null,
             "Error message does not match"
           );
+          done();
+        }
+      });
+  });
+
+  it("Get All Active Rooms when there are some users", function(done) {
+    requestUser[1]
+      .post(endpoint)
+      .send({ query: getRoomsQuery })
+      .end((err, res) => {
+        if (err) {
+          done(err);
+        } else {
+          let response = res.body;
+          logger.debug(JSON.stringify(response))
+          chai.expect(response).to.have.keys(["data"]);
+          chai.expect(response.data).to.have.keys(["rooms"]);
+          chai.assert.isAtLeast(
+            response.data.rooms.length,
+            1,
+            "At least 1 room should have been returned"
+          );
+          chai
+            .expect(response.data.rooms[0])
+            .to.have.keys([
+              "id",
+              "name",
+              "title",
+              "avatar",
+              "description",
+              "active",
+              "createdAt",
+              "updatedAt",
+              "users",
+              "roomConversations"
+            ]);
+          chai.expect(response.data.rooms[0].users).to.be.of.length(1);
+          chai.expect(response.data.rooms[0].users[0]).to.have.keys(['userName','loggedIn','id']);
+          chai.assert.strictEqual(response.data.rooms[0].users[0].userName, user1.userName, "UserName in the room does not match.");
+          chai.expect(response.data.rooms[0].roomConversations).to.be.of.length(0);
           done();
         }
       });
@@ -372,7 +425,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // logger.debug(response);
+          logger.debug(JSON.stringify(response));
           chai.expect(response).to.have.key("data");
           chai.expect(response.data).to.have.key("user");
           chai
@@ -384,8 +437,18 @@ describe("User Behaviour Tests", function() {
               "gender",
               "connected",
               "loggedIn",
-              "createdAt"
+              "createdAt",
+              "room",
+              "sentConversations",
+              "recievedConversations"
             ]);
+          chai.expect(response.data.user.room).to.have.keys(['id']);
+          chai.assert(response.data.user.room.id, this.rooms[0].id, "Room Id does not match");
+          chai.expect(response.data.user.sentConversations).to.have.lengthOf(2);
+          chai.expect(response.data.user.sentConversations[0]).to.have.keys(['text']);
+          chai.expect(response.data.user.recievedConversations).to.have.lengthOf(1);
+          chai.expect(response.data.user.recievedConversations[0]).to.have.keys(['text']);
+
           done();
         }
       });
@@ -401,7 +464,7 @@ describe("User Behaviour Tests", function() {
           done(err);
         } else {
           let response = res.body;
-          // logger.debug(response);
+          logger.debug(JSON.stringify(response));
           chai.expect(response).to.have.key("data");
           chai.expect(response.data).to.have.key("user");
           chai
@@ -413,8 +476,16 @@ describe("User Behaviour Tests", function() {
               "gender",
               "connected",
               "loggedIn",
-              "createdAt"
+              "createdAt",
+              "room",
+              "sentConversations",
+              "recievedConversations"
             ]);
+          chai.assert.strictEqual(response.data.user.room.id, this.rooms[0].id, "Room Id does not match");
+          chai.expect(response.data.user.sentConversations).to.have.lengthOf(2);
+          chai.expect(response.data.user.sentConversations[0]).to.have.keys(['text']);
+          chai.expect(response.data.user.recievedConversations).to.have.lengthOf(1);
+          chai.expect(response.data.user.recievedConversations[0]).to.have.keys(['text']);
           done();
         }
       });
@@ -566,59 +637,60 @@ describe("User Behaviour Tests", function() {
   });
 });
 
-describe("Logging out users.. so that next tests can be carried out.", () => {
-  it("User1 Logging Out.", done => {
-    requestUser[0]
-      .post(endpoint)
-      .send({ query: logoutMutationUser1 })
-      .end((err, res) => {
-        logger.debug(JSON.stringify(res));
-        let response = res.body.data.logoutUser;
+// describe("Logging out users.. so that next tests can be carried out.", () => {
+//   it("User1 Logging Out.", done => {
+//     requestUser[0]
+//       .post(endpoint)
+//       .send({ query: logoutMutationUser1 })
+//       .end((err, res) => {
+//         logger.debug(JSON.stringify(res));
+//         let response = res.body.data.logoutUser;
        
-        chai.assert.strictEqual(
-          res.status,
-          200,
-          "Status of request does not match"
-        );
-        chai
-          .expect(Object.keys(response))
-          .to.have.members(["success", "error"]);
-        chai.assert.strictEqual(
-          response.success,
-          true,
-          "Success message does not match."
-        );
-        chai.expect(response.error).to.be.null;
-        done();
-      });
-  });
-  it("User2 Logging Out.", done => {
-    requestUser[1]
-      .post(endpoint)
-      .send({ query: logoutMutationUser2 })
-      .end((err, res) => {
-        let response = res.body.data.logoutUser;
-        logger.debug(response);
-        chai.assert.strictEqual(
-          res.status,
-          200,
-          "Status of request does not match"
-        );
-        chai
-          .expect(Object.keys(response))
-          .to.have.members(["success", "error"]);
-        chai.assert.strictEqual(
-          response.success,
-          true,
-          "Success message does not match."
-        );
-        chai.expect(response.error).to.be.null;
-        done();
-      });
-  });
-});
+//         chai.assert.strictEqual(
+//           res.status,
+//           200,
+//           "Status of request does not match"
+//         );
+//         chai
+//           .expect(Object.keys(response))
+//           .to.have.members(["success", "error"]);
+//         chai.assert.strictEqual(
+//           response.success,
+//           true,
+//           "Success message does not match."
+//         );
+//         chai.expect(response.error).to.be.null;
+//         done();
+//       });
+//   });
+//   it("User2 Logging Out.", done => {
+//     requestUser[1]
+//       .post(endpoint)
+//       .send({ query: logoutMutationUser2 })
+//       .end((err, res) => {
+//         let response = res.body.data.logoutUser;
+//         logger.debug(response);
+//         chai.assert.strictEqual(
+//           res.status,
+//           200,
+//           "Status of request does not match"
+//         );
+//         chai
+//           .expect(Object.keys(response))
+//           .to.have.members(["success", "error"]);
+//         chai.assert.strictEqual(
+//           response.success,
+//           true,
+//           "Success message does not match."
+//         );
+//         chai.expect(response.error).to.be.null;
+//         done();
+//       });
+//   });
+// });
 
 describe("Room behaviour tests", function() {
+  this.timeout(20000);
   let rooms = [];
   let users = [user1, user2];
   let times = [];

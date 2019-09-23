@@ -59,26 +59,26 @@ const migrate =  async (store, models) => {
 
     // logger.debug(models)
     
-    let addition1 = await newRoom.addUsers(newUser1);
-    let addition2 = await newRoom.addUsers(newUser2);
-    let members = await newRoom.getUsers({
-        where : {
-            userName : 'hello'
-        }
-    });
-    logger.debug(members);
+    // let addition1 = await newRoom.addUsers(newUser1);
+    // let addition2 = await newRoom.addUsers(newUser2);
+    // let members = await newRoom.getUsers({
+    //     where : {
+    //         userName : 'hello'
+    //     }
+    // });
+    // logger.debug(members);
 
     let removal = await newRoom.removeUser(newUser2);
     
     logger.debug('Addition Succesful');
 
-    let newConversation = await models.conversations.create({
-        from: newUser1.id,
-        toUser: null,
-        toRoom: newRoom.id,
-        toType: 'ROOM',
-        text: 'HEYYYY'
-    })
+    // let newConversation = await models.conversations.create({
+    //     from: newUser1.id,
+    //     toUser: null,
+    //     toRoom: newRoom.id,
+    //     toType: 'ROOM',
+    //     text: 'HEYYYY'
+    // })
     
     
     // logger.debug("=============================")
