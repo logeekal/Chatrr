@@ -17,7 +17,18 @@ class UserAPI extends DataSource {
     async find(filter) {
         logger.debug('Finding the user');
         logger.debug(filter)
-        const user = await this.store.Users.findOne(filter);
+        const user = await this.store.Users.findOne({
+            ...filter,
+            include: [{
+                model: this.store.Conversations,
+                as: 'recievedConversations'
+            },{
+                model: this.store.Conversations,
+                as: 'sentConversations'
+            },{
+                model: this.store.Rooms
+            }]
+        });
         logger.debug(user)
         return user
     }

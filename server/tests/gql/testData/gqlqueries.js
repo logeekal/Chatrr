@@ -8,6 +8,15 @@ const getRoomsQuery = `query getRooms{
         active
         createdAt
         updatedAt
+        users{
+          userName
+          id
+          loggedIn
+        }
+        roomConversations{
+          text
+          createdAt
+        }
     }
   }`
 
@@ -21,6 +30,15 @@ const getRoomsQuery = `query getRooms{
       connected
       loggedIn
       createdAt
+      room{
+        id
+      }
+      sentConversations{
+        text
+      }
+      recievedConversations{
+        text
+      }
     }
   }`
 

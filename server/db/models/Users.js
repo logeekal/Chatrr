@@ -23,7 +23,9 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: true
         },
         loggedIn: { 
-            type: DataTypes.BOOLEAN, 
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         },
         avatar: {
             type: DataTypes.STRING,
@@ -77,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
         
-        users.belongsTo(models.rooms,);
+        users.belongsTo(models.rooms);
     };
 
     return users;

@@ -79,13 +79,16 @@ const addUserToRoom = async (_, { roomId }, context) => {
 
             let addedUser = await dataSources.userAPI.find(filters);
             logger.debug('New User Added to room. Publishing')
-            pubsub.publish(
+            try{pubsub.publish(
                 NEW_USER_JOINED_ROOM.topic, {
                 [NEW_USER_JOINED_ROOM.subscription]: {
                     ...addedUser
                 }
             }
-            );
+            );}catch(err){
+                logger.debug(`Error in publishing to queue`);
+                logger.debug(err);
+            }
 
             return {
                 success: true,

@@ -9,10 +9,18 @@ const getAllRooms = async (_, {} , context ) => {
 };
 
 
-const getAllActiveRooms = async (_, {} , context ) => {
-    const { dataSources, req } = context
+const getAllActiveRooms = async (parent, args , context, info ) => {
+    const { dataSources, req } = context;
     isAuthenticated(context);
-    return  await dataSources.roomsAPI.getAllActiveRooms();
+    logger.debug('Print args');
+    logger.debug(args);
+    logger.debug(info);
+    logger.debug(parent);
+    
+    const { roomId } = args;
+
+
+    return  await dataSources.roomsAPI.getAllActiveRooms(roomId);
 };
 
 
