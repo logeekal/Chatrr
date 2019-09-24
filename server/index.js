@@ -4,7 +4,8 @@ const socket= require('socket.io');
 const http =  require('http');
 const cookieSession = require('cookie-session');
 const Cookies = require('cookies');
-
+const jwt =  require('jsonwebtoken');
+const { withAuth } = require('./express-middlewares');
 const expressSession = require('express-session');
 
 const { isAuthenticated } = require('./utils/auth/auth');
@@ -35,9 +36,6 @@ const app  = express();
 app.use(cookieSession(
     SECRET.COOKIE_SESSION_OPTS
 ));
-
-
-
 
 
 const  corsOptions = {
@@ -121,7 +119,7 @@ const gqlServer  = new ApolloServer({
     
 });
 
-
+app.use(withAuth);
 gqlServer.applyMiddleware({app, path: '/gql' , cors:corsOptions});
 
 const server = http.createServer(app);

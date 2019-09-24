@@ -11,6 +11,10 @@ const error_codes = {
         name: "WRONG_TO_TYPE",
         message: "Wrong value supplied for To Type"
     },
+    NOT_AUTHORIZED: {
+        name: "NOT_AUTHORIZED",
+        message: "Not Authorized"
+    },
     NO_RECORD_ERROR: ( filters ) => {
         return {
         name: "NO_RECORD_ERROR",

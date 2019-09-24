@@ -45,7 +45,7 @@ class UserAPI extends DataSource {
         });
         logger.debug('Got the Result');
         logger.debug(result);
-        return result;
+        return result.dataValues;
     }
 
 
