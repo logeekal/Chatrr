@@ -9,7 +9,7 @@ const { NEW_LOGIN, NEW_LOGOUT, NEW_USER_JOINED_ROOM,
     NEW_CHAT_MESSAGE_TO_USER,
     NEW_CHAT_MESSAGE_TO_ROOM,
     NEW_CHAT_MESSAGE } = require('./subscriptions/topics');
-
+require('dotenv').config
 
 const getCurrentUser = async (context) => {
     let { dataSources, req } = context;
@@ -39,17 +39,19 @@ const loginUser = async (_, userObject, context) => {
         logger.debug('')
         logger.debug(createdUser);
 
-        login(context, result);
+        let token = login(context, result);
         // logger.debug(context.req.session);
 
         pubsub.publish(NEW_LOGIN.topic, { [NEW_LOGIN.subscription]: { ...createdUser } })
 
         return {
             success: true,
-            error: null
+            error: null,
+            token: process.env.NODE_ENV !== 'production' ? token : ''
         }
     } catch (err) {
         logger.debug('Error while logging in ');
+        logger.error(err);
         throwError(err)
     }
 }
@@ -265,7 +267,12 @@ const logoutUser = async (_, { }, context) => {
 
 const getUser = async (_, { userName }, context) => {
     let { dataSources } = context;
-    // isAuthenticated(req);
+    if(!userName){
+        userName = isAuthenticated(context);
+    }else{
+        isAuthenticated(context);
+    }
+    
     logger.debug('In getUser Resolver');
     logger.debug(userName);
     let result = await dataSources.userAPI.find({

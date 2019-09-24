@@ -82,7 +82,7 @@ type Mutation {
                 gender: String,
                 ip: String,
                 location: String
-                ): GenericResponse!
+                ): LoginResponse!
 
     """
     Need to update the username to something else on Logout...
@@ -107,6 +107,12 @@ type Mutation {
     removeUserFromRoom: GenericResponse! @auth(requires: USER)
 
     updateConnectedStatus(status: Boolean!) : GenericResponse!
+}
+
+type LoginResponse {
+    success: Boolean!
+    error: String
+    token: String!
 }
 
 type GenericResponse {
