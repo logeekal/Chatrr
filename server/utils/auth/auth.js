@@ -22,8 +22,9 @@ const isAuthenticated = context => {
     logger.debug('Authenticating')
     // console.log(context)
     if ("currentUser" in context) {
+        logger.debug(`CurrentUser in context`);
         return context.currentUser;
-    } else if (context.req) {
+    } else if( (context.req) && context.req.session && context.req.session.user) {
         return context.req.session.user;
     } else {
         throw Error("Not Authorized.");

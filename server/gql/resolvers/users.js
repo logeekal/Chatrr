@@ -267,7 +267,12 @@ const logoutUser = async (_, { }, context) => {
 
 const getUser = async (_, { userName }, context) => {
     let { dataSources } = context;
-    // isAuthenticated(req);
+    if(!userName){
+        userName = isAuthenticated(context);
+    }else{
+        isAuthenticated(context);
+    }
+    
     logger.debug('In getUser Resolver');
     logger.debug(userName);
     let result = await dataSources.userAPI.find({
