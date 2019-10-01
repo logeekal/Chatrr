@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,58 +14,80 @@ import {
   View,
   Text,
   StatusBar,
-  TextInput
+  TextInput,
 } from 'react-native';
 
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import LinearGradient from 'react-native-linear-gradient';
 import MainBG from './components/MainBG';
-import { mainThemeColors } from './globals/colors';
+import {mainThemeColors} from './globals/colors';
 import ProfileForm from './components/ProfileForm';
-import { getScreenDims } from './globals/helpers/dimensions';
+import {getScreenDims} from './globals/helpers/dimensions';
+import {TouchableOpacity} from 'react-native';
 
 const App = () => {
+  const [state, setState] = useState({loaded: false});
+
+  const logo = (
+    <TouchableOpacity
+      onPress={() =>
+        setState({
+          ...state,
+          loaded: !state.loaded,
+        })
+      }>
+      <Icon name="teamspeak" size={150} color="#FFF" />
+    </TouchableOpacity>
+  );
+
   return (
-  
-    <MainBG style={{display: "flex"}}>
-      <StatusBar 
+    <MainBG style={{display: 'flex'}}>
+      <StatusBar
         barStyle="light-content"
-        backgroundColor= {mainThemeColors.darkpurple}
+        backgroundColor={mainThemeColors.darkpurple}
         translucent={true}
       />
-      <View style={styles.container}>
-        <View style={styles.header}></View>
-        <View style={styles.formContainer} >
-          <ProfileForm style={styles.form}/>
+
+      {state.loaded ? (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View>{logo}</View>
+          </View>
+          <View style={styles.formContainer}>
+            <ProfileForm style={styles.form} />
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View>{logo}</View>
+          </View>
+        </View>
+      )}
     </MainBG>
- 
   );
 };
 
-
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     width: getScreenDims().sw * 0.85,
-    alignSelf: "flex-end"
+    alignSelf: 'flex-end',
+    justifyContent: "center"
   },
-  header :{
-    flex: 0.4,
+  header: {
+    flex: 0.45,
+    display: 'flex',
+    justifyContent: 'center',
   },
-  formContainer:{
-    flex: 0.6,
-    display: "flex",
-
+  logoContainer: {},
+  formContainer: {
+    flex: 0.55,
+    display: 'flex',
   },
   form: {
-    alignSelf: "flex-end",
-
-  }
-})
-
-
+    alignSelf: 'flex-end',
+  },
+});
 
 export default App;

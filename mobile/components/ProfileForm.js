@@ -25,6 +25,8 @@ const ProfileForm = ({mode}) => {
                 isFocused={userName.isFocused}
                 placeholder={"username"}
                 placeholderTextColor={"grey"}
+                autoCapitalize="none"
+                autoCorrect={false}
                 onChangeText={ value => {
                     setUserName({...userName,
                         value: value

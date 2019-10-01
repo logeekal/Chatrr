@@ -11,7 +11,7 @@ export const  FormTextField = styled.TextInput`
     margin-top: 5;
     margin-bottom: 5;
     font-size: ${mainThemeFonts.input.size};
-    border-bottom-width: 2
+    border-bottom-width: 2;
     border-bottom-color: ${props => props.isFocused ? 
         mainThemeColors.font.text["input-focus"] : 
         mainThemeColors.font.text["input-nofocus"]};
@@ -19,6 +19,3 @@ export const  FormTextField = styled.TextInput`
 `
 
 
-/*
-
-*/
