@@ -1,4 +1,4 @@
-const agent = require("../utils/client");
+const Client = require("../utils/client");
 const { execute, makePromise } = require("apollo-link");
 const gql = require("graphql-tag");
 const SUB_QUERY = gql`
@@ -20,6 +20,7 @@ const LOGIN = gql`
     loginUser(userName: "testUser1234", gender: "M") {
       success
       error
+      token
     }
   }
 `;
@@ -40,40 +41,8 @@ const operation2 = {
   query: GET_USER
 };
 
-// agent.mutate({
-//   ...operation
-// })
-// .then((result)=>{
-//     // console.log(result);
-//     agent.query({
-//         ...operation2
-//     })
-//     .then((result)=>{
-//         console.log(result);
-//     })
-// })
-// .catch((err)=>{
-//     // console.error(err);
-//     // console.log(agent);
-    
-//     agent.query({
-//         ...operation2
-//     })
-//     .then((result)=>{
-//         console.log(result);
-//         agent.subscribe(
-//             {
-//                 query: SUB_QUERY
-//             }
-//         ).subscribe({
-//             next(data) {
-//                 console.log(data);
-//             }
-//         })
-//     })
-// })
 
-
+let agent = new Client().client;
 
 makePromise(execute(agent, operation))
     .then((result)=> {

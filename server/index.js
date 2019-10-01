@@ -94,6 +94,14 @@ const gqlServer  = new ApolloServer({
     subscriptions: {
         onConnect: (connectionParams, webSocket) => {
             logger.info('Subscription OnConnect Fired'); 
+            if(connectionParams &&  connectionParams.token){
+                let user = jwt.verify(connectionParams.token, SECRET.AUTH_KEY)
+                logger.debug(`Got the user with token in connection params`);
+                logger.debug(user);
+                return {
+                    currUser: user
+                }
+            }
             logger.debug(connectionParams);
             const existingCookie =  new Cookies(webSocket.upgradeReq, null, {});
             logger.debug(existingCookie);
