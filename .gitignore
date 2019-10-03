@@ -12,7 +12,7 @@ ios/
 
 # Xcode
 #
-build/
+*/build/*
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -37,11 +37,11 @@ build/
 .gradle
 local.properties
 *.iml
-gradle/
+*/gradle/*
 
 # node.js
 #
-node_modules/
+*/node_modules/*
 npm-debug.log
 yarn-error.log
 
