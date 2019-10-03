@@ -2,7 +2,7 @@ node_modules
 *secret*
 .env
 app
-ios
+ios/
 
 
 ### React Native gitignore
