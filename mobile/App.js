@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,6 +15,7 @@ import {
   Text,
   StatusBar,
   TextInput,
+  Animated,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -27,18 +28,30 @@ import {TouchableOpacity} from 'react-native';
 
 const App = () => {
   const [state, setState] = useState({loaded: false});
+  const [loadAnim] = useState(new Animated.Value(0));
 
   const logo = (
     <TouchableOpacity
       onPress={() =>
-        setState({
-          ...state,
-          loaded: !state.loaded,
-        })
+        // setState({
+        //   ...state,
+        //   loaded: !state.loaded,
+        // })
+
+        {
+          console.log(`Firing on press`)
+          console.log(JSON.stringify(loadAnim) == 1);
+          Animated.timing(loadAnim, {
+            toValue: JSON.stringify(loadAnim) == 0 ? 1 : 0,
+            duration: 1000,
+          }).start(()=> console.log(`Animation started ${JSON.stringify(loadAnim)}`));
+        }
       }>
       <Icon name="teamspeak" size={150} color="#FFF" />
     </TouchableOpacity>
   );
+
+  console.log(loadAnim);
 
   return (
     <MainBG style={{display: 'flex'}}>
@@ -48,22 +61,16 @@ const App = () => {
         translucent={true}
       />
 
-      {state.loaded ? (
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View>{logo}</View>
-          </View>
+      <Animated.View style={styles.container}>
+        <View style={styles.header}>
+          <View>{logo}</View>
+        </View>
+        { JSON.stringify(loadAnim) === 0 ? (
           <View style={styles.formContainer}>
             <ProfileForm style={styles.form} />
           </View>
-        </View>
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View>{logo}</View>
-          </View>
-        </View>
-      )}
+        ): <Text>Hey</Text>}
+      </Animated.View>
     </MainBG>
   );
 };
@@ -73,7 +80,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: getScreenDims().sw * 0.85,
     alignSelf: 'flex-end',
-    justifyContent: "center"
+    justifyContent: 'center',
   },
   header: {
     flex: 0.45,
