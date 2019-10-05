@@ -19,7 +19,7 @@ import {mainThemeColors} from '../globals/colors';
 import ProfileForm from '../components/ProfileForm';
 import { getScreenDims } from '../globals/helpers/dimensions';
 
-const Main = () => {
+const Main = (props) => {
   const [state, setState] = useState({loaded: false});
   const [headerPosition, setHeaderPostiion] = useState({
       x:0,
@@ -27,6 +27,10 @@ const Main = () => {
       width:0,
       height:0
   });
+
+  const handleLogin = ( ) => {
+    props.navigation.navigate('RoomList');
+} 
 
 
   const logo = (
@@ -70,7 +74,7 @@ const Main = () => {
         </View>
         { state.loaded ? (
           <View style={styles.formContainer}>
-            <ProfileForm style={styles.form} />
+            <ProfileForm style={styles.form} submitForm={handleLogin} />
           </View>
         ): <Text>Hey</Text>}
       </View>

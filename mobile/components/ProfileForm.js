@@ -6,13 +6,14 @@ import SubmitButton from './buttons';
 import { getScreenDims } from './../globals/helpers/dimensions';
 import { Separater } from './misc/index';
 
-const ProfileForm = ({mode}) => {
+const ProfileForm = ({ mode, submitForm }) => {
 
     const [userName, setUserName] = useState({
         isFocused: false,
         value: ''
     });
-    
+
+
     return <View>
         <View style={styles.input}>
             <FormTextField
@@ -41,7 +42,7 @@ const ProfileForm = ({mode}) => {
         </View>
         <Separater height={60} border={false}/>
         <View style={styles.input} >
-            <SubmitButton  />
+            <SubmitButton onPress={submitForm} />
         </View>
     </View>
 }

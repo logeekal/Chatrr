@@ -11,7 +11,7 @@ import { mainThemeColors } from './../../globals/colors';
 import { mainThemeFonts } from '../../globals/fonts';
 import { BoxShadow } from 'react-native-shadow';
 
-const SubmitButton = () => {
+const SubmitButton = ({onPress}) => {
 
 
     const [shadowOpts, setShadowOpts]= useState({
@@ -45,6 +45,7 @@ const SubmitButton = () => {
                         opacity: 0.5
                     })
                 }}
+                onPress={onPress}
                 >
                 <Text style={styles.label}>Starts</Text>
             </TouchableOpacity>
