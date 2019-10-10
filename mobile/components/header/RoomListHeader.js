@@ -46,20 +46,16 @@ const RoomListHeader = (props) => {
 
             <FlatList
                 horizontal
-                style={{borderWidth: 1, borderColor: "black"}}
+                style={{}}
                 data={menuItems}
                 ref={listRef}
                 keyExtractor={item=> {return item}}
                 renderItem={({item, index})=>{
                     console.log(`item is ${item}`)
                     let style = index == currMenuIndex ? 'headerLeftTextMain' : 'headerLeftTextGeneric';
-                    return (<TouchableOpacity
-                                onPress={
-                                    handleScroll
-                                }
-                            >
+                    return (
                             <Text style={{ ...styles[style], ...styles.headerLeftTextCommon }}>{item}</Text>
-                        </TouchableOpacity>)
+                    )
                 }}
             />
 

@@ -5,6 +5,7 @@ import { createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import RoomList from './screens/RoomList';
 import SwipeView from './screens/SwipeView';
+import Conversations from './screens/Conversations';
 
 
 
@@ -12,6 +13,7 @@ const MainNavigator = createStackNavigator({
   Main: Main,
   RoomList: RoomList,
   SwipeView: SwipeView,
+  Conversations: Conversations
 },{
   headerMode: 'none',
   navigationOptions:{

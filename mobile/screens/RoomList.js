@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { mainThemeFonts } from '../globals/fonts';
 import RoomListHeader from './../components/header/RoomListHeader';
 import RoomThumnail from '../components/RoomThumbnail';
 import { ScrollView } from 'react-native-gesture-handler';
 import ConversationBar from '../components/conversationBar';
 
-const RoomList = ( ) => {
+const RoomList = ( {navigation} ) => {
 
     const [roomList, setRoomList] = useState([{
         name: 'Family1',
@@ -58,7 +58,11 @@ const RoomList = ( ) => {
                 
         </View>
         <View style={styles.roomList}>
-            <ConversationBar />
+            <TouchableOpacity 
+                onPress={()=> {navigation.navigate('Conversations')}}
+            >
+                <ConversationBar />
+            </TouchableOpacity>
         </View>
         </ScrollView>
     </View>

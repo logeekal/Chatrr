@@ -36,11 +36,11 @@ const ProfileForm = ({ mode, submitForm }) => {
                 maxLength={20}
             />
         </View>
-        <Separater height={60} border={false}/>
+        <Separater height={60} border={false} ></Separater>
         <View style={styles.input} >
             <TextSwitchToggle />
         </View>
-        <Separater height={60} border={false}/>
+        <Separater height={60} border={false} ></Separater>
         <View style={styles.input} >
             <SubmitButton onPress={submitForm} />
         </View>

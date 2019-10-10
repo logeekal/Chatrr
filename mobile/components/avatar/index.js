@@ -7,14 +7,15 @@ import { mainThemeColors } from './../../globals/colors';
 
 const Avatar = ({width, shape, image}) => {
 
-    let _width = 60;
+    let _width = width;
     let _radius = 50;
     const _image = require('../../assets/images/32.jpg');
 
     return <Image 
             source={_image} 
             style={[
-                StyleSheet.absoluteFillObject,{
+                // StyleSheet.absoluteFillObject,
+                {
                     width: _width,
                     borderRadius: _radius,
                     height: _width,

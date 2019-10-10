@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-export const Separater = ({height, width, border}) => {
-    let style = {}
-
-
+export const Separater = ({height, width, border, children, style}) => {
+    let currentStyle = {}
 
     if(height) {
-        style  = {...style, height: height};
+        currentStyle  = {...currentStyle, height: height};
     };
 
     if(width) {
-        style = {...style, width: width};
+        currentStyle = {...currentStyle, width: width};
     };
 
     if(border){
-        style = {
-            ...style,
+        currentStyle = {
+            ...currentStyle,
             borderWidth: 1,
-            borderColor: "white"
+            borderColor: "red"
         };
     };
 
     return <View
-        style={{...style}}
+        style={{...currentStyle, ...style}}
     >
-
+        {children}
     </View>
 
 }
