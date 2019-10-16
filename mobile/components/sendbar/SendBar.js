@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import  styled  from 'styled-components/native';
-import { View, Image, StyleSheet, Text } from 'react-native';
+import { View, Image, StyleSheet, Text,  } from 'react-native';
 import { mainThemeColors } from './../../globals/colors';
 import { TouchableOpacity, TextInput } from 'react-native-gesture-handler';
 import Ionicon from 'react-native-vector-icons/Ionicons'
@@ -14,11 +14,15 @@ const SendBarView =  styled.View`
     height: 60;
     display: flex;
     flex-direction: row;
+    margin-top: 5;
+    margin-left:5;
+    margin-right:5;
+    margin-bottom: 0;
 `
 
 const customBorderWidth = 0;
 
-const SendBar = () => {
+const SendBar = ({ onSend }) => {
     const [message, setMessage] = useState('');
 
 
@@ -42,7 +46,13 @@ const SendBar = () => {
                 />
             </View>
             <View style={styles.send}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                    onPress={()=> {
+                        onSend(message);
+                        setMessage('');
+                        
+                    }}
+                >
                 <Image 
                     source={require('../../assets/images/send.png')}
                 />

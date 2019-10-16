@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { SvgXml } from 'react-native-svg';
 // import Menu from '../../assets/icons/'
-import { View, Text, StyleSheet, Image, StatusBar, Animated, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, StatusBar, Animated, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
 import { mainThemeFonts } from './../../globals/fonts';
 import { mainThemeColors } from './../../globals/colors';
+import OverlayMenu from './../../screens/OverlayMenu';
 
 const RoomListHeader = (props) => {
 
@@ -11,6 +12,7 @@ const RoomListHeader = (props) => {
     const [currMenuIndex, setCurrMenuIndex] = useState(0);
     const listRef = useRef(null);
     const [shiftDistance, setShiftDistance] = useState(new Animated.Value(0));
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const handleScroll = () => {
         setMenuItems([...menuItems, ...menuItems])
@@ -29,6 +31,24 @@ const RoomListHeader = (props) => {
       };
 
     return <View style={styles.header}>
+        {
+            menuVisible == true ? 
+            <Modal
+                animationType={"fade"}
+                transparent={true}   
+                onRequestClose={()=> Alert.alert('Closing Model', 'Modal is closing now. Thanks!')}
+                >
+                <OverlayMenu 
+                    visible={menuVisible} 
+                    onClose={()=>{
+                        setMenuVisible(false)
+                    }}
+                />
+            </Modal>
+            :
+            null
+        }
+        
         <StatusBar
         barStyle="dark-content"
         backgroundColor={mainThemeColors.light}
@@ -62,16 +82,25 @@ const RoomListHeader = (props) => {
 
         </View>
         <View>
-                <Image
-                    style={styles.headerImageRight}
-                    source={require('../../assets/icons/menu.png')} />
-                {/* <SvgXml width="200" height="200" xml={Menu} />; */}
+                <TouchableOpacity 
+                    onPress={()=> {
+                        setMenuVisible(!menuVisible);
+                    }}
+                >
+                    <Image
+                        style={styles.headerImageRight}
+                        source={require('../../assets/icons/menu.png')} />
+                    {/* <SvgXml width="200" height="200" xml={Menu} />; */}
+                </TouchableOpacity>
         </View>
+
+        
     </View>
 }
 
 const styles = StyleSheet.create({
     screen: {
+        position: "absolute",
         display: "flex",
 
         top: 20
@@ -107,6 +136,11 @@ const styles = StyleSheet.create({
     },
     headerImageRight: {
         marginRight: 10
+    },
+    overlaymenu:{
+        position: "absolute",
+        left:-20,
+    
     }
 });
 

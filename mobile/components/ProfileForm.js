@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Text, View, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { FormTextField } from './inputs/index';
 import TextSwitchToggle from './toggles/TextSwitchToggle';
 import SubmitButton from './buttons';
 import { getScreenDims } from './../globals/helpers/dimensions';
 import { Separater } from './misc/index';
+import ConfirmGoogleCaptcha from 'react-native-google-recaptcha-v2';
+import { constants } from '../globals/constants';
 
 const ProfileForm = ({ mode, submitForm }) => {
 
@@ -13,8 +15,36 @@ const ProfileForm = ({ mode, submitForm }) => {
         value: ''
     });
 
+    const captchaForm = useRef(null)
+
+    const {CAPTCHA}  = constants;
+
+    const onMessage = event => {
+        if (event && event.nativeEvent.data){
+            if(['cancel','error', 'expired'].includes(events.nativeEvent.data)){
+                console.log(`Captcha Event resulted in ... ${event.nativeEvent.data}`)
+                captchaForm.hide();
+                return;
+            }else{
+                console.log(`Captcha Verified.`);
+                setTimeout(()=> {
+                    captchaForm.hide();
+                }, 1500)
+                
+                return;
+            }
+        }
+    }
+
 
     return <View>
+        <ConfirmGoogleCaptcha 
+            ref={captchaForm}
+            siteKey={CAPTCHA.siteKey}
+            baseUrl={"localhost"}
+            languageCode="en"
+            onMessage={onMessage}
+        />
         <View style={styles.input}>
             <FormTextField
                 onFocus={() => { 
@@ -41,9 +71,11 @@ const ProfileForm = ({ mode, submitForm }) => {
             <TextSwitchToggle />
         </View>
         <Separater height={60} border={false} ></Separater>
+
         <View style={styles.input} >
-            <SubmitButton onPress={submitForm} />
+            <SubmitButton onPress={()=> captchaForm.current.show()} />
         </View>
+        
     </View>
 }
 

@@ -28,7 +28,7 @@ const ChatBubbleView = styled.View`
     justify-content: space-between;
 `
 
-const ChatBubble = ( {type} ) => {
+const ChatBubble = ( {type, conversation} ) => {
 
 
     return <View
@@ -48,7 +48,7 @@ const ChatBubble = ( {type} ) => {
                 color: type == 'left'? mainThemeColors.darkpurple : mainThemeColors.light,
             }}
         >
-        This is right
+        {conversation.text}
     
         </Text> 
 
@@ -57,7 +57,7 @@ const ChatBubble = ( {type} ) => {
             alignSelf: type == "left" ? "flex-start" : 'flex-end',
             fontSize: 18,
             color: type == 'left'? mainThemeColors.darkpurple : mainThemeColors.light,}}
-        >5:03 pm</Text>    
+        >{conversation.createdAt}</Text>    
     </ChatBubbleView>
 
         
