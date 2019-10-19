@@ -14,7 +14,6 @@ const UserReducer =  (state, action) => {
             },
             loggedInUser: user.userName
         };
-        console.log(newState);
         return newState;
     }
     return state;
