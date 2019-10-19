@@ -5,7 +5,7 @@ import {StyleSheet} from 'react-native';
 import {mainThemeColors} from './../../globals/colors';
 import { mainThemeFonts } from './../../globals/fonts';
 
-const TextSwitchToggle = () => {
+const TextSwitchToggle = ({setGender}) => {
   const toggleRef = useRef(null);
   const [toggle, setToggle] = useState({
     style: {
@@ -23,6 +23,8 @@ const TextSwitchToggle = () => {
         },
         value: 'Female',
       });
+
+      setGender('F')
     } else {
       setToggle({
         ...toggle,
@@ -31,6 +33,7 @@ const TextSwitchToggle = () => {
         },
         value: 'Male',
       });
+      setGender('M')
     }
   };
 

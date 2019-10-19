@@ -10,6 +10,12 @@ import { constants } from '../globals/constants';
 
 const ProfileForm = ({ mode, submitForm }) => {
 
+    const [user, setUser] = useState({
+        userName: '',
+        loggedIn: true,
+        gender: 'M'
+    });
+
     const [userName, setUserName] = useState({
         isFocused: false,
         value: ''
@@ -19,39 +25,57 @@ const ProfileForm = ({ mode, submitForm }) => {
 
     const {CAPTCHA}  = constants;
 
+
+    const setGender = (gender) => {
+        setUser({
+            ...user,
+            gender: gender
+        })
+    }
+
+
     const onMessage = event => {
         if (event && event.nativeEvent.data){
-            if(['cancel','error', 'expired'].includes(events.nativeEvent.data)){
+            console.log(event.nativeEvent.data)
+            if(['cancel','error', 'expired'].includes(event.nativeEvent.data)){
                 console.log(`Captcha Event resulted in ... ${event.nativeEvent.data}`)
-                captchaForm.hide();
+                captchaForm.current.hide();
                 return;
             }else{
-                console.log(`Captcha Verified.`);
+                console.log(`Captcha Verified.`);       
+                captchaForm.current.hide();
+                
                 setTimeout(()=> {
-                    captchaForm.hide();
-                }, 1500)
+                    submitForm(user);
+                }, 300);
                 
                 return;
             }
         }
+
     }
 
 
     return <View>
-        <ConfirmGoogleCaptcha 
+        {
+            process.env.NODE_ENV === 'production' &&
+        
+            <ConfirmGoogleCaptcha 
             ref={captchaForm}
             siteKey={CAPTCHA.siteKey}
-            baseUrl={"localhost"}
+            baseUrl={CAPTCHA.url}
             languageCode="en"
             onMessage={onMessage}
-        />
+            />
+        }
+        
         <View style={styles.input}>
             <FormTextField
                 onFocus={() => { 
                     console.log('Firing On focus'); 
                     setUserName({...userName, isFocused: true});
                 }}
-                value={userName.value}
+                value={user.userName}
                 onBlur={()=> {setUserName({...userName, isFocused: false})}}
                 isFocused={userName.isFocused}
                 placeholder={"username"}
@@ -59,8 +83,9 @@ const ProfileForm = ({ mode, submitForm }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 onChangeText={ value => {
-                    setUserName({...userName,
-                        value: value
+                    setUser({
+                        ...user,
+                        userName: value
                     });
                 }}
                 maxLength={20}
@@ -68,12 +93,31 @@ const ProfileForm = ({ mode, submitForm }) => {
         </View>
         <Separater height={60} border={false} ></Separater>
         <View style={styles.input} >
-            <TextSwitchToggle />
+            <TextSwitchToggle 
+                setGender={setGender}
+            />
         </View>
         <Separater height={60} border={false} ></Separater>
 
-        <View style={styles.input} >
-            <SubmitButton onPress={()=> captchaForm.current.show()} />
+        <View style={{
+            
+        }} >
+            <SubmitButton onPress={()=> {
+                process.env.NODE_ENV === 'production'
+                ?
+                 captchaForm.current.show()
+                 :
+                 submitForm(user)
+
+            }} 
+            buttonTheme="light"
+            width={200}
+            height={70}
+            textSize={36}
+            text="Start"
+            radius={35}
+            
+            />
         </View>
         
     </View>

@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,9 +18,11 @@ import MainBG from '../components/MainBG';
 import {mainThemeColors} from '../globals/colors';
 import ProfileForm from '../components/ProfileForm';
 import { getScreenDims } from '../globals/helpers/dimensions';
+import { AppContext } from './../state/context/AppContext';
 
 const Main = (props) => {
-  const [state, setState] = useState({loaded: false});
+  const [localState, setState] = useState({loaded: false});
+
   const [headerPosition, setHeaderPostiion] = useState({
       x:0,
       y:0,
@@ -28,7 +30,12 @@ const Main = (props) => {
       height:0
   });
 
-  const handleLogin = ( ) => {
+
+  const {state, actions} = useContext(AppContext);
+
+
+  const handleLogin = async (user) => {
+    await actions.loginUser(user)
     props.navigation.navigate('RoomList');
 } 
 
@@ -38,8 +45,8 @@ const Main = (props) => {
       onPress={() =>
         {
             setState({
-          ...state,
-          loaded: !state.loaded,
+          ...localState,
+          loaded: !localState.loaded,
         });
     }
       }>
@@ -72,7 +79,7 @@ const Main = (props) => {
             }>
           <View>{logo}</View>
         </View>
-        { state.loaded ? (
+        { localState.loaded ? (
           <View style={styles.formContainer}>
             <ProfileForm style={styles.form} submitForm={handleLogin} />
           </View>

@@ -6,6 +6,7 @@ import { BoxShadow } from 'react-native-shadow';
 import { getScreenDims } from './../../globals/helpers/dimensions';
 import { mainThemeColors } from './../../globals/colors';
 import Avatar from './../avatar/index';
+import Menu from './../menu/index';
 
 
 const GenericHeader = ({ children }) => {
@@ -47,10 +48,9 @@ const GenericHeader = ({ children }) => {
                     <Avatar image={23} width={30} mode={'full'} />
                 </View>
                 <View style={styles.headerRight}>
-                <Image
-                    source={require('../../assets/icons/menu.png')}
-                    style={styles.image}
-                />
+                    <Menu 
+                        
+                    />
                 </View>
             </View>
         </Separater>
@@ -78,10 +78,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "flex-end",
         top: 5,
+        borderWidth: 0
     },
     headerLeft: {
-        flex: 0.1,
-        width: 30,
+        flex: 0.15,
+        height: 50,
+        borderWidth: 0
     },
     image:{
         width: null,
@@ -90,12 +92,16 @@ const styles = StyleSheet.create({
         flex: 1
     },  
     headerMain: {
-        flex: 0.8
+        flex: 0.7,
+        borderWidth: 0
     },
     headerRight: {
-        flex: 0.1,
+        flex: 0.15,
         marginRight: 10,
-        width: 10
+        borderWidth: 0,
+        height: '100%',
+        justifyContent: "center",
+        alignItems: "flex-end"
     }
 })
 

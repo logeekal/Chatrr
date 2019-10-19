@@ -6,22 +6,22 @@ import RoomListHeader from '../components/header/RoomListHeader';
 import RoomThumnail from '../components/RoomThumbnail';
 import ConversationBar from '../components/conversationBar';
 
-const ChatList = ( ) => {
+const ChatList = () => {
 
-    
+
 
 
     return <View style={styles.screen}>
-            <RoomListHeader menu={['Chats','Rooms']} />
-       <ConversationBar />
+        <RoomListHeader menu={['Chats', 'Rooms']} />
+        <ConversationBar />
     </View>
 }
 
 
-const styles =  StyleSheet.create({
-    screen:{
+const styles = StyleSheet.create({
+    screen: {
         display: "flex",
-        top:200
+        top: 200
     },
 
     roomList: {
@@ -30,7 +30,7 @@ const styles =  StyleSheet.create({
         alignItems: "center",
         padding: 10,
     }
-   
+
 })
 
 

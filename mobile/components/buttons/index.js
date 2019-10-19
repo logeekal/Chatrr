@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
     View,
@@ -11,14 +11,20 @@ import { mainThemeColors } from './../../globals/colors';
 import { mainThemeFonts } from '../../globals/fonts';
 import { BoxShadow } from 'react-native-shadow';
 
-const SubmitButton = ({onPress}) => {
-
+/**
+ * 
+ * @param {function} param0 
+ */
+const SubmitButton = ({onPress, buttonTheme, width, height, textSize, text, radius}) => {
+    
+    const buttonBGColor = buttonTheme === 'light' ? mainThemeColors.light :  mainThemeColors.lightneonpurple;
+    const shadowColor = buttonTheme === 'light' ? mainThemeColors.neonpurple :  "#000";
 
     const [shadowOpts, setShadowOpts]= useState({
-        width: 206,
-        height: 73,
-        color: '#F907D2',
-        radius: 35,
+        width: width,
+        height: height,
+        color: shadowColor,
+        radius: radius ,
         opacity: 0.5,
         x: 0,
         y: 15,
@@ -27,7 +33,35 @@ const SubmitButton = ({onPress}) => {
         }
     });
 
+    console.log(shadowOpts)
 
+    const styles = {
+        mainButton: {
+            width: width,
+            height: height,
+            backgroundColor: buttonBGColor,
+            borderRadius: radius ,
+            shadowColor: shadowColor,
+            // shadowColor: "black",
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            shadowOffset: {
+                width: 1,
+                height: 4,
+            },
+            marginVertical: 10,
+            elevation: 10,
+            alignItems: 'center',
+        },
+    
+        label: {
+            fontSize: textSize,
+            fontFamily: mainThemeFonts.family.quicksand('Bold'),
+            color: buttonTheme == 'light' ? mainThemeColors.lightpurple : mainThemeColors.light,
+            marginTop: 5,
+        },
+    };
+    
 
     return (
         <BoxShadow setting={shadowOpts}>
@@ -47,37 +81,12 @@ const SubmitButton = ({onPress}) => {
                 }}
                 onPress={onPress}
                 >
-                <Text style={styles.label}>Starts</Text>
+                <Text style={styles.label}>{text}</Text>
             </TouchableOpacity>
         </BoxShadow>
     );
 };
 
-const styles = StyleSheet.create({
-    mainButton: {
-        width: 206,
-        height: 73,
-        backgroundColor: mainThemeColors.light,
-        borderRadius: 35,
-        shadowColor: '#F907D2',
-        // shadowColor: "black",
-        shadowRadius: 10,
-        shadowOpacity: 1,
-        shadowOffset: {
-            width: 1,
-            height: 4,
-        },
-        marginVertical: 10,
-        elevation: 10,
-        alignItems: 'center',
-    },
 
-    label: {
-        fontSize: 36,
-        fontFamily: mainThemeFonts.family.quicksand('Bold'),
-        color: mainThemeColors.lightpurple,
-        marginTop: 5,
-    },
-});
 
 export default SubmitButton;

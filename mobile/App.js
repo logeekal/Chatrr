@@ -1,37 +1,28 @@
 import React from 'react';
-import { View } from 'react-native';
+import {View} from 'react-native';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import Main from './screens/Main';
-import { createAppContainer } from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
-import RoomList from './screens/RoomList';
-import SwipeView from './screens/SwipeView';
-import Conversations from './screens/Conversations';
+import MainAppStack from './MainAppStack';
+import AppStateProvider from './state/context/AppContext';
 
-
-
-const MainNavigator = createStackNavigator({
-  Main: Main,
-  RoomList: RoomList,
-  SwipeView: SwipeView,
-  Conversations: Conversations
-},{
-  headerMode: 'none',
-  navigationOptions:{
-    headerMode: 'none',
-    headerVisible: false,
-  }
-});
-
-
-MainNavigator
+const MainNavigator = createSwitchNavigator(
+  {
+    Login: Main,
+    MainApp: MainAppStack,
+  },
+  {
+    initialRouteName: 'Login',
+  },
+);
 
 const App = createAppContainer(MainNavigator);
 
 
-// const App = () => {
-//   return (
-//       <Main />
-//   );
-// };
 
-export default App;
+export default () => {
+  return (
+    <AppStateProvider>
+      <App />
+    </AppStateProvider>
+  )
+};

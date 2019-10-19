@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { View, Text, StatusBar, Keyboard, Image, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Separater } from '../components/misc';
 import GenericHeader from '../components/header/GenericHeader';
@@ -12,8 +12,13 @@ import SwipableScreen from './../components/swipableScreen/index';
 import { mainThemeColors } from '../globals/colors';
 import SideBar from './../components/sidebar/index';
 import  LinearGradient  from 'react-native-linear-gradient';
+import { AppContext } from './../state/context/AppContext';
 
 const Conversations = () => {
+
+    const {state, actions} = useContext(AppContext);
+    console.log('App State in conversations');
+    console.log(appState);
 
     const headerRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(0);

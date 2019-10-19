@@ -39,27 +39,30 @@ const RoomList = ( {navigation} ) => {
     return <View style={styles.screen}>
        <RoomListHeader menu={['Rooms','Chats']} />
        <ScrollView
+            alwaysBounceHorizontal
             horizontal
             pagingEnabled
 
        >
         <View style={styles.roomList}>
-            <FlatList 
-                    data={roomList}
-                    keyExtractor={ (item) => {
-                        return item.name
-                    }}
-                    renderItem={({item}) => {
-                        return <RoomThumnail name={item.name} image={item.image} />
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    
+            <FlatList
+                data={roomList}
+                keyExtractor={ (item) => {
+                    return item.name
+                }}
+                renderItem={({item}) => {
+                    return <RoomThumnail name={item.name} image={item.image} />
+                }}
+                showsVerticalScrollIndicator={false}
+                
             />
                 
         </View>
         <View style={styles.roomList}>
             <TouchableOpacity 
-                onPress={()=> {navigation.navigate('Conversations')}}
+                onPress={()=> {
+                    navigation.navigate('Conversations')
+                }}
             >
                 <ConversationBar />
             </TouchableOpacity>

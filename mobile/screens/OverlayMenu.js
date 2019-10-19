@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Text,
@@ -12,12 +12,18 @@ import {mainThemeColors} from './../globals/colors';
 import {getScreenDims} from './../globals/helpers/dimensions';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons'
 import { mainThemeFonts } from './../globals/fonts';
+import {  ConfirmDialog } from 'react-native-simple-dialogs';
 
 const OverlayMenu = ({onClose}) => {
+
+  const [exitMenuVisible, setExitMenuVisible] =  useState(false);
+
+
+
     const menu = [{
         id: "chatroom",
         label: "Chat Rooms",
-        screen: "RoomList"
+        screen: "RoomList",
     },{
         id: "activechats",
         label: "Active Chats",
@@ -42,12 +48,32 @@ const OverlayMenu = ({onClose}) => {
     },{
         id:"logout",
         label: "Sign Out",
-        type: "function"
+        type: "function",
+        action: () => { 
+          setExitMenuVisible(true)
+        }
     }]
 
 
   return (
     <View style={styles.screen}>
+      <ConfirmDialog
+        visible={exitMenuVisible}
+        title="Sign Out ? "
+        onTouchOutside={()=> setExitMenuVisible(false)}
+        positiveButton={
+          {title: "Yes"}
+        }
+       negativeButton={
+          {title: "Yes"}
+        }
+      >
+        <Text> Helloooo </Text>
+
+
+      </ConfirmDialog>
+
+
       <View style={styles.mainBG}>
         <View style={styles.mainFG}>
           <StatusBar
@@ -69,6 +95,9 @@ const OverlayMenu = ({onClose}) => {
             }}
             renderItem={({item})=>{
                 return (
+                  <TouchableOpacity
+                    onPress={item.action}
+                  >
                     <Text
                         style={{
                             fontFamily: mainThemeFonts.family.quicksand('Bold'),
@@ -79,6 +108,7 @@ const OverlayMenu = ({onClose}) => {
                     >
                         {item.label}
                     </Text>
+                    </TouchableOpacity>
                 )
             }}
           />
