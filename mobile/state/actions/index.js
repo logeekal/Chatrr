@@ -16,12 +16,25 @@ export const userActions = (dispatch) => {
             });
         },
     
-        logoutUser: (user) => {
+        logoutUser: () => {
             dispatch({
                 type: action_types.LOGOUT,
-                payload: user
+                payload: ''
             })
-        }    
+        },
     }
 }
 
+
+
+export const miscActions = (dispatch) => {
+    return {
+        loading: ( loadingObj ) => {
+            console.log(`Updating loading object Now :  ${JSON.stringify(loadingObj)}`);
+            dispatch({
+                type: action_types.TOGGLE_LOADING,
+                payload: loadingObj
+            })
+        }
+    }
+}

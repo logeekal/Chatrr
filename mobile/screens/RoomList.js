@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { mainThemeFonts } from '../globals/fonts';
@@ -6,6 +6,8 @@ import RoomListHeader from './../components/header/RoomListHeader';
 import RoomThumnail from '../components/RoomThumbnail';
 import { ScrollView } from 'react-native-gesture-handler';
 import ConversationBar from '../components/conversationBar';
+import Loading from '../components/loading';
+import { AppContext } from '../state/context/AppContext';
 
 const RoomList = ( {navigation} ) => {
 
@@ -33,10 +35,12 @@ const RoomList = ( {navigation} ) => {
     }]);
 
 
-
+    const {state, actions} = useContext(AppContext);
+    console.log(`Printing State in roomList : ${JSON.stringify(state)}`)
 
 
     return <View style={styles.screen}>
+        <Loading loading={state.misc.loading} />
        <RoomListHeader menu={['Rooms','Chats']} />
        <ScrollView
             alwaysBounceHorizontal
