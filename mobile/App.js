@@ -6,6 +6,8 @@ import MainAppStack from './MainAppStack';
 import AppStateProvider from './state/context/AppContext';
 import { ApolloProvider } from '@apollo/react-hooks';
 import apolloClient from './utils/apollo/index';
+import NavigationService from './utils/navigation/NavigationService';
+
 
 const MainNavigator = createSwitchNavigator(
   {
@@ -25,7 +27,11 @@ export default () => {
   return (
     <AppStateProvider>
       <ApolloProvider client={apolloClient}>
-        <App />
+        <App 
+          ref={navigatorRef => {
+            NavigationService.setTopLevelNavigator(navigatorRef)
+          }}
+        />
       </ApolloProvider>
     </AppStateProvider>
   )

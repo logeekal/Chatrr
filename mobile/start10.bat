@@ -1,0 +1,1 @@
+C:\Users\E9968575\AppData\Local\Android\Sdk\emulator\emulator @Pixel_2_XL_API_29

@@ -8,6 +8,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import ConversationBar from '../components/conversationBar';
 import Loading from '../components/loading';
 import { AppContext } from '../state/context/AppContext';
+import { ALL_ROOMS } from './../utils/apollo/queries';
+import { useQuery } from '@apollo/react-hooks';
 
 const RoomList = ( {navigation} ) => {
 
@@ -36,7 +38,32 @@ const RoomList = ( {navigation} ) => {
 
 
     const {state, actions} = useContext(AppContext);
+    const [transformedData, setTransformedData] = useState(false)
     console.log(`Printing State in roomList : ${JSON.stringify(state)}`)
+
+    const {loading, error, data } = useQuery(ALL_ROOMS);
+
+    if( loading ) {
+        return <Loading loading={{state: true, text: "Getting all rooms..."}} />
+    }
+
+    //Generating  image path statically
+    const getImage = (image) => {
+        let imageName = image.split('.')[0].toLowerCase();
+        console.log(`Fetching image : ${imageName}`);
+        switch(imageName){
+            case 'delhi':
+                return require('../assets/images/delhi.jpg');
+            case 'mumbai':
+                return require('../assets/images/mumbai.jpg');
+            case 'couple' : 
+                return require('../assets/images/couple.jpg');
+            default:
+                return require('../assets/images/couple.jpg'); 
+        }
+    }
+
+
 
 
     return <View style={styles.screen}>
@@ -50,12 +77,12 @@ const RoomList = ( {navigation} ) => {
        >
         <View style={styles.roomList}>
             <FlatList
-                data={roomList}
+                data={data.rooms}
                 keyExtractor={ (item) => {
                     return item.name
                 }}
                 renderItem={({item}) => {
-                    return <RoomThumnail name={item.name} image={item.image} />
+                    return <RoomThumnail name={item.name} image={getImage(item.avatar)} />
                 }}
                 showsVerticalScrollIndicator={false}
                 
@@ -87,6 +114,7 @@ const styles =  StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 10,
+        bottom: 0,
     }
    
 })

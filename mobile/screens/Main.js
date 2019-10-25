@@ -79,7 +79,7 @@ const Main = props => {
 
   //   console.log(loadAnim);
   if (loading || state.misc.loading.state) {
-    return <Loading loading={{state: true}} />;
+    return <Loading loading={{state: true, text: "Logging you in"}} />;
   }
 
   return (

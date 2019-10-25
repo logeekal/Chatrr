@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         borderColor:"black",
-        borderWidth: 1,
+        borderWidth: 0,
         width: 300
 
     },

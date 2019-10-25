@@ -18,6 +18,7 @@ import { AppContext } from './../state/context/AppContext';
 import { useMutation } from '@apollo/react-hooks';
 import { MUTATION_LOGOUT_USER } from '../utils/apollo/mutations';
 import Loading from '../components/loading';
+import NavigationService from '../utils/navigation/NavigationService';
 
 const OverlayMenu = ({onClose}) => {
   const [exitMenuVisible, setExitMenuVisible] = useState(false);
@@ -75,17 +76,18 @@ const OverlayMenu = ({onClose}) => {
 
 
 
-  handleLogOut = async () => {
+  const handleLogOut = async () => {
     let result =  await logoutMutation();
 
     if(result){
       actions.logoutUser();
-      Alert.alert('LogOut Complete', ' Logout successful' );
+      //Alert.alert('LogOut Complete', ' Logout successful' );
+      NavigationService.navigate('Login',{});
     }
   }
 
   if(loading){
-    return <Loading loading={{state: true}} />
+    return <Loading loading={{state: true, text: 'Signing you out'}} />
   }
 
   return (
@@ -100,8 +102,14 @@ const OverlayMenu = ({onClose}) => {
             handleLogOut()
           }
         }}
-        negativeButton={{title: 'No'}}>
-        <Text> Helloooo </Text>
+        negativeButton={{
+          title: 'No',
+          onPress: () => {
+            setExitMenuVisible(false)
+          }
+          }}
+        >
+        <Text style={styles.exitMenuText}>Are you sure you would like to logout?  You will lose all chats. </Text>
       </ConfirmDialog>
 
       <View style={styles.mainBG}>
@@ -180,6 +188,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 20,
   },
+  exitMenuText: {
+    fontFamily: mainThemeFonts.family.quicksand('Medium'),
+    fontSize: 20,
+    color: "#000"
+  }
 });
 
 export default OverlayMenu;
