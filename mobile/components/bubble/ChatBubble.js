@@ -38,7 +38,7 @@ const ChatBubble = ( {type, conversation} ) => {
             alignItems: "flex-end",
         }}
     >
-    <Avatar image={23} width={40} />
+    <Avatar image={23} width={40} mode={'image'}/>
 
     <ChatBubbleView type={type}> 
         <Text

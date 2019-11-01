@@ -22,10 +22,28 @@ export const userActions = (dispatch) => {
                 payload: ''
             })
         },
+
+        joinRoom: (roomId) => {
+            dispatch({
+                type: action_types.JOIN_ROOM,
+                payload: roomId
+            })
+        }
     }
 }
 
 
+export const roomActions = (dispatch) => {
+    return {
+        saveRooms: (roomsList) => {
+            console.log(`Got the rooms.. Now adding them in the state`);
+            dispatch({
+                type: action_types.SAVE_ROOMS,
+                payload: roomsList
+            })
+        }
+    }
+}
 
 export const miscActions = (dispatch) => {
     return {

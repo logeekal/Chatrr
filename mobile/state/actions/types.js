@@ -1,6 +1,8 @@
 export const action_types = {
     LOGIN: 'LOGIN',
     LOGOUT: 'LOGOUT',
+    SAVE_ROOMS: 'SAVE_ROOMS',
+    GET_ROOM:'GET_ROOM',
     GET_ROOMS: 'ROOMS',
     JOIN_ROOM: 'JOIN_ROOM',
     TOGGLE_LOADING: 'TOGGLE_LOADING'

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { View, Text, StyleSheet, StatusBar, Image } from 'react-native';
 import { Separater } from '../misc';
@@ -7,12 +7,29 @@ import { getScreenDims } from './../../globals/helpers/dimensions';
 import { mainThemeColors } from './../../globals/colors';
 import Avatar from './../avatar/index';
 import Menu from './../menu/index';
+import { getImage } from './../../globals/helpers/ImageLocator';
+import { AppContext } from './../../state/context/AppContext';
 
-
-const GenericHeader = ({ children }) => {
+//container - will be using state
+const GenericHeader = ({ children, type }) => {
 
     const height = 80;
     const width = getScreenDims().sw
+
+    const {state, actions} = useContext(AppContext); 
+
+    let headerContext = {};
+    if(type == 'room'){
+        headerContext = state.allRooms[state.currentRoomId];
+    }else if (type == 'user'){
+        headerContext =  state.allUsers[state.loggedInUser];
+    }else{
+        throw Error ('Error in Generic Header. Wrong value of type provided.')
+    }
+    console.log('In Generic Header');
+    console.log(headerContext)
+
+
 
     const shadowOpts = {
         width: width,
@@ -45,7 +62,11 @@ const GenericHeader = ({ children }) => {
                 />
                 </View>
                 <View style={styles.headerMain}>
-                    <Avatar image={23} width={30} mode={'full'} />
+                    <Avatar 
+                        image={getImage(headerContext.avatar)} 
+                        profile={{name: (headerContext.title || headerContext.userName)}}
+                        width={30} 
+                        mode={type == 'room' ?  'text' : 'both'} />
                 </View>
                 <View style={styles.headerRight}>
                     <Menu 

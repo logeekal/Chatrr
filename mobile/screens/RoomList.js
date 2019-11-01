@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { mainThemeFonts } from '../globals/fonts';
@@ -9,62 +9,50 @@ import ConversationBar from '../components/conversationBar';
 import Loading from '../components/loading';
 import { AppContext } from '../state/context/AppContext';
 import { ALL_ROOMS } from './../utils/apollo/queries';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { getScreenDims } from './../globals/helpers/dimensions';
+import { getImage } from './../globals/helpers/ImageLocator';
+import { MUTATION_JOIN_ROOM } from '../utils/apollo/mutations';
 
 const RoomList = ( {navigation} ) => {
 
-    const [roomList, setRoomList] = useState([{
-        name: 'Family1',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family2',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family3',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family4',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family5',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family6',
-        image: require('../assets/images/couple.jpg')
-    },{
-        name: 'Family7',
-        image: require('../assets/images/couple.jpg')
-    }]);
-
+    // const [roomList, setRoomList] = useState([{
+    //     name: 'Family1',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family2',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family3',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family4',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family5',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family6',
+    //     image: require('../assets/images/couple.jpg')
+    // },{
+    //     name: 'Family7',
+    //     image: require('../assets/images/couple.jpg')
+    // }]);
 
     const {state, actions} = useContext(AppContext);
     const [transformedData, setTransformedData] = useState(false)
     console.log(`Printing State in roomList : ${JSON.stringify(state)}`)
 
-    const {loading, error, data } = useQuery(ALL_ROOMS);
+    let {loading, error, data } = useQuery(ALL_ROOMS,{
+        onCompleted: (data)=>{
+            actions.saveRooms(data.rooms)
+        }
+    });
+
 
     if( loading ) {
         return <Loading loading={{state: true, text: "Getting all rooms..."}} />
     }
-
-    //Generating  image path statically
-    const getImage = (image) => {
-        let imageName = image.split('.')[0].toLowerCase();
-        console.log(`Fetching image : ${imageName}`);
-        switch(imageName){
-            case 'delhi':
-                return require('../assets/images/delhi.jpg');
-            case 'mumbai':
-                return require('../assets/images/mumbai.jpg');
-            case 'couple' : 
-                return require('../assets/images/couple.jpg');
-            default:
-                return require('../assets/images/couple.jpg'); 
-        }
-    }
-
-
-
 
     return <View style={styles.screen}>
         <Loading loading={state.misc.loading} />
@@ -77,12 +65,24 @@ const RoomList = ( {navigation} ) => {
        >
         <View style={styles.roomList}>
             <FlatList
-                data={data.rooms}
+                data={state.orderedRoomIds}
                 keyExtractor={ (item) => {
-                    return item.name
+                    return item
                 }}
                 renderItem={({item}) => {
-                    return <RoomThumnail name={item.name} image={getImage(item.avatar)} />
+                    return (
+                        <TouchableOpacity
+                            onPress={ () => {
+                                navigation.navigate('Conversations', {
+                                     type: 'room',
+                                   roomId: state.allRooms[item].id
+                                    });
+                                }                                
+                            }
+                        >
+                            <RoomThumnail name={state.allRooms[item].name} image={getImage(state.allRooms[item].avatar)} />
+                        </TouchableOpacity>
+                    )
                 }}
                 showsVerticalScrollIndicator={false}
                 
@@ -114,7 +114,6 @@ const styles =  StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 10,
-        bottom: 0,
     }
    
 })

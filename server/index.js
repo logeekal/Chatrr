@@ -105,9 +105,9 @@ const gqlServer  = new ApolloServer({
             logger.debug(connectionParams);
             const existingCookie =  new Cookies(webSocket.upgradeReq, null, {});
             logger.debug(existingCookie);
-            if (connectionParams){
-                console.log(Buffer.from(connectionParams.headers.cookie,'base64').toString());
-            }
+            // if (connectionParams){
+            //     console.log(Buffer.from(connectionParams.headers.cookie,'base64').toString());
+            // }
 
            try
            { 

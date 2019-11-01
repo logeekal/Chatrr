@@ -32,9 +32,11 @@ const loginUser = async (_, userObject, context) => {
     let { dataSources } = context;
     // logger.debug(context);
     try {
+        logger.debug(`UserObject is \n ${JSON.stringify(userObject)}`)
         const result = await dataSources.userAPI.create({
             ...userObject
         });
+
         let createdUser = result.dataValues;
         logger.debug('')
         logger.debug(createdUser);
@@ -80,7 +82,10 @@ const addUserToRoom = async (_, { roomId }, context) => {
         if (result[0] > 0) {
 
             let addedUser = await dataSources.userAPI.find(filters);
+            let { room, recievedConversations, sentConversations, ...publishUserdata} = addedUser; 
+            
             logger.debug('New User Added to room. Publishing')
+            logger.debug(publishUserdata)
             try{pubsub.publish(
                 NEW_USER_JOINED_ROOM.topic, {
                 [NEW_USER_JOINED_ROOM.subscription]: {

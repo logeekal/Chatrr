@@ -44,7 +44,7 @@ const migrate =  async (store, models) => {
     let newRoom = await store.Rooms.create({
         name:   'Delhi',
         title: 'delhiRoom',
-        avatar: 'XYZ'
+        avatar: 'delhi.jpg'
     });
 
     logger.debug(`new Room created : ` );
@@ -53,7 +53,13 @@ const migrate =  async (store, models) => {
     let newRoom2 = await store.Rooms.create({
         name:   'Mumbai',
         title: 'Mumbai',
-        avatar: 'XYZ'
+        avatar: 'mumbai.jpg'
+    });
+
+    let newRoom3 = await store.Rooms.create({
+        name: 'Dating',
+        title: 'Dating',
+        avatar: 'couple.jpg'
     });
 
 

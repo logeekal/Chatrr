@@ -7,6 +7,7 @@ export const mainThemeColors = {
     lightneonpurple: '#B00194',
     light:"#FFFFFF",
     palepurple: '#DAC9DA',
+    error: '#ff0000',
     font:{
         text: {
             "input-nofocus": "#545454",

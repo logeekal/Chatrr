@@ -54,6 +54,7 @@ const Main = props => {
       variables: {
         userName: user.userName,
         gender: user.gender,
+        avatar: user.gender == 'F' ?  'female.png' : 'male.png'
       },
     });
     console.log(`result is : `);
@@ -77,12 +78,13 @@ const Main = props => {
     </TouchableOpacity>
   );
 
-  //   console.log(loadAnim);
+    // console.log(loadAnim);
   if (loading || state.misc.loading.state) {
     return <Loading loading={{state: true, text: "Logging you in"}} />;
   }
 
   return (
+    
     <MainBG style={{display: 'flex'}}>
       <StatusBar
         barStyle="light-content"

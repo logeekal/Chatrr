@@ -30,18 +30,16 @@ class UserAPI extends DataSource {
             }]
         });
         logger.debug(user)
-        return user
+        return user.dataValues
     }
 
-    async create({ userName, gender }) {
+    async create(userObject) {
         // logger.debug('Loggin In User Now.');
         // logger.debug("In User API in GQL Data sources:  Context values is  : ");
         // logger.debug(this.context);
-        const loggedIn = true;
+        // const loggedIn = true;
         const result = await this.store.Users.create({
-            userName,
-            gender,
-            loggedIn
+           ...userObject
         });
         logger.debug('Got the Result');
         logger.debug(result);

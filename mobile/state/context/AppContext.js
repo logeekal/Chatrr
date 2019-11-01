@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import reducers from '../reducers'
 // import actions from '../actions';
-import { userActions, miscActions } from './../actions/index';
+import { userActions, miscActions, roomActions } from './../actions/index';
 
 export const AppContext = React.createContext();
 
@@ -29,6 +29,7 @@ export const initialState = {
     orderedRooms: [],
     OrderedConversations: [],
     allUsers: {},
+    allRooms: {},
 }
 
 
@@ -36,7 +37,8 @@ const AppStateProvider = ({ children }) => {
 
     const [userState, userDispatch] = useReducer(reducers.UserReducer, {
         allUsers: {},
-        loggedInUser: ''
+        loggedInUser: '',
+        currentRoomId: ''
     });
 
 
@@ -48,16 +50,23 @@ const AppStateProvider = ({ children }) => {
         }
     });
 
+    const [roomState, roomDispatch] = useReducer(reducers.RoomReducer,{
+        orderedRoomIds:[],
+        allRooms: {}
+    })
+
     console.log(userActions(userDispatch));
     const actions = {
         ...userActions(userDispatch),
         ...miscActions(miscDispatch),
+        ...roomActions(roomDispatch),
     }
 
     const state= {
         ...userState,
-        ...miscState
-    }
+        ...miscState,
+        ...roomState
+    }   
 
 
     return (

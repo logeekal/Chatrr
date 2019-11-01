@@ -7,13 +7,16 @@ import { getScreenDims } from './../globals/helpers/dimensions';
 import { Separater } from './misc/index';
 import ConfirmGoogleCaptcha from 'react-native-google-recaptcha-v2';
 import { constants } from '../globals/constants';
+import FA from 'react-native-vector-icons/FontAwesome';
+import { mainThemeColors } from './../globals/colors';
 
 const ProfileForm = ({ mode, submitForm }) => {
 
     const [user, setUser] = useState({
         userName: '',
         loggedIn: true,
-        gender: 'M'
+        gender: 'F',
+        avatar: 'female.png'
     });
 
     const [userName, setUserName] = useState({
@@ -29,7 +32,8 @@ const ProfileForm = ({ mode, submitForm }) => {
     const setGender = (gender) => {
         setUser({
             ...user,
-            gender: gender
+            gender: gender,
+            avatar: gender == 'F' ? 'female.png' : 'male.png'
         })
     }
 
@@ -72,6 +76,9 @@ const ProfileForm = ({ mode, submitForm }) => {
         
         <View style={styles.input}>
             <FormTextField
+                style={{
+                   
+                }}
                 onFocus={() => { 
                     console.log('Firing On focus'); 
                     setUserName({...userName, isFocused: true});
@@ -91,6 +98,7 @@ const ProfileForm = ({ mode, submitForm }) => {
                 }}
                 maxLength={20}
             />
+            {/* <FA style={{flex: 0.1, padding: 10}} name='exclamation-triangle' color={mainThemeColors.error} size={30}  /> */}
         </View>
         <Separater height={60} border={false} ></Separater>
         <View style={styles.input} >
@@ -127,7 +135,6 @@ const ProfileForm = ({ mode, submitForm }) => {
 
 const styles =  StyleSheet.create({
     input:{ 
-    
     },
     toggle:{
     },

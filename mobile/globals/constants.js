@@ -9,7 +9,13 @@ export const  constants = {
         url:"http://127.0.0.1/"
     },
     SERVER: {
-        http: 'http://10.234.220.107:3001/gql',
-        ws: 'ws://10.234.220.107:3001/graphql',
+        host: '10.234.220.58',//'192.168.1.7',
+        port: '3001',
+        get http() {
+            return `http://${this.host}:${this.port}/gql` 
+        },
+        get ws(){
+            return `ws://${this.host}:${this.port}/graphql`
+        } 
     }
 }

@@ -7,6 +7,7 @@ import { mainThemeFonts } from './../../globals/fonts';
 
 
 const Avatar = ({width, shape, image, profile, mode}) => {
+    //mode can be text, picture or both
 
     let _width = width;
     let _radius = 50;
@@ -22,10 +23,12 @@ const Avatar = ({width, shape, image, profile, mode}) => {
             return name
         }
     } 
-
+    console.log(`mode is ${mode}`);
     return <View style={styles.container}>
-        <Image 
-            source={_image} 
+        {
+            (mode == 'image' || mode == 'both' ) &&
+            <Image 
+            source={image} 
             style={[
                 // StyleSheet.absoluteFillObject,
                 {
@@ -37,8 +40,20 @@ const Avatar = ({width, shape, image, profile, mode}) => {
                 }
             ]}
             />
+
+        }
+        
             {
-                mode == 'full' && <Text style={styles.text}>{handleUserName(_profile.name)}</Text>
+                (mode == 'text' || mode == 'both') && 
+                <Text 
+                    style={{
+                        ...styles.text,
+                        fontSize: mode === 'text' ? 30 :  20
+
+                    }}
+                >
+                    {handleUserName(profile.name)}
+                </Text>
             }
         </View>
 
