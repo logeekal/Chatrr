@@ -3,7 +3,7 @@ node_modules
 .env
 app
 ios/
-
+mobile/android/gradle/wrapper/gradle*
 
 # ### React Native gitignore
 # # OSX
