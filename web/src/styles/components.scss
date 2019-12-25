@@ -1,0 +1,11 @@
+@import './constants.scss';
+@import '../App.scss';
+@import '../screens/main/styles.scss';
+@import '../component/Layout/styles.scss';
+@import '../component/avatar/style.scss';
+
+@mixin themify($theme-name){
+    @include app($theme-name, $allColors);
+    @include main($theme-name, $allColors);
+    @include avatar($theme-name, $allColors);
+}

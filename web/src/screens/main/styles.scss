@@ -1,0 +1,31 @@
+@mixin main($theme-name, $themes){
+
+    $colors:  map-get($map: $themes, $key: $theme-name);
+    $border : 0px solid map-get($map: $colors, $key: 'divider');
+
+    .main-container{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        border: $border;
+        height: 98vh;
+        .side {
+            min-width: 300px;
+            border: $border;
+            background-color: map-get($map: $colors, $key: bgSecondary);
+        };
+        .context {
+            width: 600px;
+            min-width: 300px;
+            border: $border;
+            background-color: map-get($map: $colors, $key: bgPrimary);
+        }
+        .main {
+            border: $border;
+            background-color: map-get($map: $colors, $key: bgPrimary);
+            width: 100%;
+        }
+
+    }
+
+}

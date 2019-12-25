@@ -1,0 +1,12 @@
+@import "./components.scss";
+
+$themes: "dark", "light";
+
+body {
+  @each $theme in $themes {
+    .#{$theme} {
+      @include themify($theme);
+      @include text-config;
+    }
+  }
+}
