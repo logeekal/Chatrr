@@ -1,32 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, Context } from "react";
 
 import logo from "./logo.svg";
 import Main from "./screens/main/Main";
+import ThemeProvider, { ThemeContext } from "./state/providers/ThemeProvider";
 
 const App: React.FC = () => {
-  const [theme, setTheme] = useState("light");
-
-  function makeDark() {
-    console.log("making dark");
-    setTheme("dark");
-    const rootElement: any = document.querySelector(":root");
-
-    rootElement.style.setProperty("--current-theme", "dark");
-  }
-
-  function makeLight() {
-    console.log("making light");
-    setTheme("light");
-    const rootElement: any = document.querySelector(":root");
-
-    rootElement.style.setProperty("--current-theme", "light-theme");
-  }
-
+  const { light } = useContext(ThemeContext);
   return (
-    <div className={"App " + theme}>
+    <div className={"App " + (light ? "light" : "dark")}>
       <Main />
     </div>
   );
 };
 
-export default App;
+const AppWithProviders: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  );
+};
+
+export default AppWithProviders;

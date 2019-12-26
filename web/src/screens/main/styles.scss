@@ -1,31 +1,47 @@
-@mixin main($theme-name, $themes){
+@mixin main($theme-name, $themes) {
+  $colors: map-get(
+    $map: $themes,
+    $key: $theme-name
+  );
+  $border: 0px solid
+    map-get(
+      $map: $colors,
+      $key: "divider"
+    );
 
-    $colors:  map-get($map: $themes, $key: $theme-name);
-    $border : 0px solid map-get($map: $colors, $key: 'divider');
-
-    .main-container{
-        width: 100%;
+  .main-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    border: $border;
+    height: 98vh;
+    
+    .side {
+      min-width: 300px;
+      border: $border;
+      background-color: map-get($map: $colors, $key: bgSecondary);
+      position: relative;
+      .toggle-container {
+        position: absolute;
+        width:100%;
+        bottom: 0;
         display: flex;
         flex-direction: row;
-        border: $border;
-        height: 98vh;
-        .side {
-            min-width: 300px;
-            border: $border;
-            background-color: map-get($map: $colors, $key: bgSecondary);
-        };
-        .context {
-            width: 600px;
-            min-width: 300px;
-            border: $border;
-            background-color: map-get($map: $colors, $key: bgPrimary);
-        }
-        .main {
-            border: $border;
-            background-color: map-get($map: $colors, $key: bgPrimary);
-            width: 100%;
-        }
-
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+      };
+    };
+    .context {
+      width: 600px;
+      min-width: 300px;
+      border: $border;
+      background-color: map-get($map: $colors, $key: bgPrimary);
     }
-
+    .main {
+      border: $border;
+      background-color: map-get($map: $colors, $key: bgPrimary);
+      width: 100%;
+    }
+  }
 }

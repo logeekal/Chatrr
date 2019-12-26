@@ -5,6 +5,7 @@ interface Props {
   menu: Array<{
     id: string;
     label: string;
+    icon: string;
   }>;
 }
 
@@ -15,7 +16,7 @@ export default function Menu(props: Props): ReactElement {
         return (
           <MenuItem
             key={menuItem.id}
-            label={menuItem.label}
+            menuItem={menuItem}
             current={index === 0 ? true : false}
           />
         );

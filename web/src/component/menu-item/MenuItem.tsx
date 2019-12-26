@@ -1,24 +1,30 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from "react";
+import { ReactSVG }  from 'react-svg';
+import { getStaticFilePath } from './../../utils/utils';
 
 interface Props {
+  menuItem: {
+    id: string;
     label: string;
-    current: boolean;
+    icon: string;
+  };
+  current: boolean;
 }
 
+
+
 export default function MenuItem(props: Props): ReactElement {
-    return (
-        <div 
-            className="menu-item-container header-menu-primary"
-            style={
-                props.current ? {
-                    borderLeftWidth: "2px",
-                    borderLeftColor: "blue",
-                    borderLeftStyle: "solid"
-                } :
-                {}
-            }    
-        >
-            {props.label}
-        </div>
-    )
+  return (
+    <div
+      className={
+        "menu-item-container header-menu-secondary " +
+        (props.current ? "selected" : "")
+      }
+    >
+      <span className="menu-item--icon">
+        <ReactSVG className="icon-wrapper" src={getStaticFilePath(props.menuItem.icon, 'svg')} />
+      </span>
+      <span className="menu-item--label">{props.menuItem.label}</span>
+    </div>
+  );
 }

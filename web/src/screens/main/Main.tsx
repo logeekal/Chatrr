@@ -1,50 +1,59 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState, useContext } from "react";
 import Layout from "../../component/Layout";
 import Avatar from "../../component/avatar/Avatar";
 import Menu from "../../component/menu/Menu";
+import Toggle from "../../component/toggle/Toggle";
+import { ThemeContext } from "./../../state/providers/ThemeProvider";
 
 const Main: FunctionComponent = props => {
-
+  const { toggle } = useContext(ThemeContext);
 
   return (
     <div className="main-container">
       <Layout className="side">
-        <Avatar 
+        <Avatar
           type="full"
           label="hellofaster"
           size={150}
           image="https://picsum.photos/200"
         />
-        <Menu 
+        <Menu
           menu={[
             {
-              id: 'rooms',
-              label: 'rooms'
+              id: "rooms",
+              label: "rooms",
+              icon: "rooms"
             },
             {
-              id: 'chats',
-              label: 'chats'
+              id: "chats",
+              label: "chats",
+              icon: "chat"
             },
             {
-              id: 'profile',
-              label: 'profile'
+              id: "profile",
+              label: "profile",
+              icon: "profile"
             },
             {
-              id: 'contactUs',
-              label: 'contact us'
+              id: "contactUs",
+              label: "contact us",
+              icon: "contact"
             },
             {
-              id: 'settings',
-              label: 'settings'
+              id: "settings",
+              label: "settings",
+              icon: "settings"
             },
             {
-              id: 'signOut',
-              label: 'sign out'
+              id: "signOut",
+              label: "sign out",
+              icon: "sign-out"
             }
           ]}
         />
-
-        />
+        <div className="toggle-container">
+          <Toggle leftIcon="day" rightIcon="night" onChange={toggle} />
+        </div>
       </Layout>
       <Layout className="context">context Panel</Layout>
       <Layout className="main">Main Panel</Layout>
@@ -53,5 +62,3 @@ const Main: FunctionComponent = props => {
 };
 
 export default Main;
-
-
