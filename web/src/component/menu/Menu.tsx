@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import MenuItem from "../menu-item/MenuItem";
 
-interface Props {
+export interface Props {
   menu: Array<{
     id: string;
     label: string;

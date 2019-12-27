@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
-import { ReactSVG }  from 'react-svg';
-import { getStaticFilePath } from './../../utils/utils';
+import { ReactSVG } from "react-svg";
+import { getStaticFilePath } from "./../../utils/utils";
 
-interface Props {
+export interface Props {
   menuItem: {
     id: string;
     label: string;
@@ -10,8 +10,6 @@ interface Props {
   };
   current: boolean;
 }
-
-
 
 export default function MenuItem(props: Props): ReactElement {
   return (
@@ -22,9 +20,14 @@ export default function MenuItem(props: Props): ReactElement {
       }
     >
       <span className="menu-item--icon">
-        <ReactSVG className="icon-wrapper" src={getStaticFilePath(props.menuItem.icon, 'svg')} />
+        <ReactSVG
+          className="icon-wrapper"
+          src={getStaticFilePath(props.menuItem.icon, "svg")}
+        />
       </span>
-      <span className="menu-item--label">{props.menuItem.label}</span>
+      <span className="menu-item--label" data-testid={props.menuItem.id}>
+        {props.menuItem.label}
+      </span>
     </div>
   );
 }

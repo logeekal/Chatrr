@@ -6,6 +6,8 @@
 @import '../component/menu-item/styles.scss';
 @import '../component/menu/styles.scss';
 @import '../component/toggle/style.scss';
+@import '../component/navigation-toggle/NavigationToggle.scss';
+@import '../screens/rooms/Rooms.scss';
 
 @mixin themify($theme-name){
     @include app($theme-name, $allColors);
@@ -13,4 +15,6 @@
     @include avatar($theme-name, $allColors);
     @include menu-item($theme-name, $allColors);
     @include toggle($theme-name, $allColors);
+    @include nav-toggle($theme-name, $allColors);
+    @include rooms($theme-name, $allColors);
 }

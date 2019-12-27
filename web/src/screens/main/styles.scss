@@ -33,8 +33,7 @@
       };
     };
     .context {
-      width: 600px;
-      min-width: 300px;
+      min-width: 500px;
       border: $border;
       background-color: map-get($map: $colors, $key: bgPrimary);
     }

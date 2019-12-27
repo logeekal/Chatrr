@@ -1,9 +1,11 @@
-import React, { FunctionComponent, useState, useContext } from "react";
+import React, { FunctionComponent, useState, useContext, SyntheticEvent } from "react";
 import Layout from "../../component/Layout";
 import Avatar from "../../component/avatar/Avatar";
 import Menu from "../../component/menu/Menu";
 import Toggle from "../../component/toggle/Toggle";
 import { ThemeContext } from "./../../state/providers/ThemeProvider";
+import NavigationToggle from "../../component/navigation-toggle/NavigationToggle";
+import Rooms from "../rooms/Rooms";
 
 const Main: FunctionComponent = props => {
   const { toggle } = useContext(ThemeContext);
@@ -54,8 +56,11 @@ const Main: FunctionComponent = props => {
         <div className="toggle-container">
           <Toggle leftIcon="day" rightIcon="night" onChange={toggle} />
         </div>
+        
       </Layout>
-      <Layout className="context">context Panel</Layout>
+      <Layout className="context">
+        <Rooms />
+      </Layout>
       <Layout className="main">Main Panel</Layout>
     </div>
   );

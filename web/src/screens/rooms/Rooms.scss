@@ -1,0 +1,28 @@
+@mixin rooms($theme-name, $themes){
+
+    $colors:    map-get($map: $themes, $key: $theme-name);
+
+    $border: 1px solid map-get($map: $colors, $key: divider);
+
+    .room-container{
+        border: $border;
+        height: 100%;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        .room-container--header{
+            margin: 10px;
+            height: 250px;
+            border: $border;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .room-container--content{
+            margin: 10px;
+            border: $border;
+            height: 100%;;
+        }
+    }
+}
