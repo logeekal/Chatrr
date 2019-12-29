@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useState, useContext, SyntheticEvent } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  useContext,
+  SyntheticEvent
+} from "react";
 import Layout from "../../component/Layout";
 import Avatar from "../../component/avatar/Avatar";
 import Menu from "../../component/menu/Menu";
@@ -56,7 +61,6 @@ const Main: FunctionComponent = props => {
         <div className="toggle-container">
           <Toggle leftIcon="day" rightIcon="night" onChange={toggle} />
         </div>
-        
       </Layout>
       <Layout className="context">
         <Rooms />

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, SyntheticEvent } from "react";
 import { ReactSVG } from "react-svg";
 import { getStaticFilePath } from "./../../utils/utils";
 
@@ -9,6 +9,7 @@ export interface Props {
     icon: string;
   };
   current: boolean;
+  onSelect: (id: string) => void;
 }
 
 export default function MenuItem(props: Props): ReactElement {
@@ -18,6 +19,10 @@ export default function MenuItem(props: Props): ReactElement {
         "menu-item-container header-menu-secondary " +
         (props.current ? "selected" : "")
       }
+      data-testid="menu-item"
+      onClick={(e: SyntheticEvent): void => {
+        props.onSelect(props.menuItem.id);
+      }}
     >
       <span className="menu-item--icon">
         <ReactSVG

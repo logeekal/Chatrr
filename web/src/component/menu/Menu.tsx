@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import MenuItem from "../menu-item/MenuItem";
 
 export interface Props {
@@ -10,14 +10,31 @@ export interface Props {
 }
 
 export default function Menu(props: Props): ReactElement {
+  const [currentMenuId, setCurrentMenuId] = useState<string>(props.menu[0].id);
+
+  /**
+   * It should be menu's responsibility the Selection on the menu item changes
+   * on click or on Selection of a menu Item.
+   *
+   * But it will not be Menu's responsibility on what happens to other components
+   * on this selection
+   *
+   * We will call this operation select and not click
+   */
+
+  const handleSelection: (id: string) => void = (id: string) => {
+    setCurrentMenuId(id);
+  };
+
   return (
-    <div className="menu-container">
+    <div className="menu-container" data-testid="menu">
       {props.menu.map((menuItem, index) => {
         return (
           <MenuItem
             key={menuItem.id}
             menuItem={menuItem}
-            current={index === 0 ? true : false}
+            current={menuItem.id === currentMenuId ? true : false}
+            onSelect={handleSelection}
           />
         );
       })}

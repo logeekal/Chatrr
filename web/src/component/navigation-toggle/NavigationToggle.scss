@@ -61,7 +61,7 @@ $borderRadius: 10px;
       @include dims(2);
       background-color: map-get($map: $colors, $key: bgAccent);
       z-index: 9998;
-      transition: all 0.3s ease-in-out;
+      transition: left 0.3s ease-in-out, padding 0.3s ease;
     }
 
     #option1 {
