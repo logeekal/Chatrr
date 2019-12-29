@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import Layout from "./../../component/Layout/index";
 import NavigationToggle from "./../../component/navigation-toggle/NavigationToggle";
+import RoomList from "../../component/room-list/RoomList";
 
 interface Props {}
 
@@ -16,7 +17,9 @@ export default function Rooms({}: Props): ReactElement {
           }}
         />
       </Layout>
-      <Layout className="room-container--content"></Layout>
+      <Layout className="room-container--content">
+        <RoomList />
+      </Layout>
     </Layout>
   );
 }

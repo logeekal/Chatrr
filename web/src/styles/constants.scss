@@ -1,141 +1,134 @@
 $allColors: (
-    light: (
-        bgPrimary: #F1E2F1,
-        bgSecondary: #E3C8E2,
-        primary: #0E0E0E,
-        secondary: #424141,
-        hint: #656565,
-        icons: #424141,
-        buttons: #270028,
-        divider: #8B8B8B,
-        bgAccent: #BE4DC1,
-        accent: #F8F8F8,
-        card: #F8F8F8
-    ),
-    dark: (
-      bgPrimary: #270028,
-      bgSecondary: #6B276D,
-      primary: #FFFFFF,
-      secondary: #DDDBDB,
-      hint: #C2C2C2,
-      icons: #FFFFFF,
-      buttons: #FFFFFF,
-      divider: #DDDBDB,
-      bgAccent: #BE4DC1,
-      accent: #F8F8F8,
-      card: #270028
-    )
+  light: (
+    bgPrimary: #f1e2f1,
+    bgSecondary: #e3c8e2,
+    primary: #0e0e0e,
+    secondary: #424141,
+    hint: #656565,
+    icons: #424141,
+    buttons: #270028,
+    divider: #8b8b8b,
+    bgAccent: #be4dc1,
+    accent: #f8f8f8,
+    card: #f8f8f8
+  ),
+  dark: (
+    bgPrimary: #270028,
+    bgSecondary: #6b276d,
+    primary: #ffffff,
+    secondary: #dddbdb,
+    hint: #c2c2c2,
+    icons: #ffffff,
+    buttons: #ffffff,
+    divider: #dddbdb,
+    bgAccent: #be4dc1,
+    accent: #f8f8f8,
+    card: #270028
+  )
 );
 
-
 // @function getColor $color){
-//     @return map-get($map: map-get($map: $allColors, $key: , $key: $color) 
+//     @return map-get($map: map-get($map: $allColors, $key: , $key: $color)
 // }
-
 
 //text Configuration
 @mixin header-menu-primary {
-    .header-menu-primary{ 
-        font-size: 27px;
-        font-weight: 600;
-        text-transform: uppercase;
-    } 
-};
+  .header-menu-primary {
+    font-size: 27px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
 
 @mixin header-menu-secondary {
-    .header-menu-secondary {
-        font-size: 24px;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
+  .header-menu-secondary {
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 }
 
 @mixin header-non-menu-primary {
-    .header-non-menu-primary {
-        font-size: 27px;
-        font-weight: 600;
-    }
+  .header-non-menu-primary {
+    font-size: 27px;
+    font-weight: 600;
+  }
 }
 
-
 @mixin body-primary {
-    .body-primary{
-        font-size: 16px;
-        font-weight: 400;
-    }    
+  .body-primary {
+    font-size: 16px;
+    font-weight: 400;
+  }
 }
 
 @mixin body-secondary {
-    .body-secondary{
-        font-size: 14px;
-        font-weight: 400;
-    }
+  .body-secondary {
+    font-size: 14px;
+    font-weight: 400;
+  }
 }
-
 
 @mixin body-hint {
-    .body-secondary{
-        font-size: 12px;
-        font-weight: 400;
-    }
+  .body-secondary {
+    font-size: 12px;
+    font-weight: 400;
+  }
 }
 
-
+@mixin upperCase {
+  .upper {
+    text-transform: uppercase;
+  }
+}
 
 @mixin text-config {
-    font-size: 16px;
-    //header
-    @include header-menu-primary;
-    @include header-menu-secondary;
-    @include header-non-menu-primary;
+  font-size: 16px;
+  //header
+  @include header-menu-primary;
+  @include header-menu-secondary;
+  @include header-non-menu-primary;
 
-    //header
-    @include body-primary;
-    @include body-secondary;
-    @include body-hint;
-    .body-em {
-        font-weight: 600;
-    }
+  //header
+  @include body-primary;
+  @include body-secondary;
+  @include body-hint;
+  @include upperCase;
+  .body-em {
+    font-weight: 600;
+  }
 }
 
-
-
-
-
 $text: (
-    body: (
-        primary: (
-            size: 16,
-            weight: 400
-        ),
-        secondary: (
-            size:  14,
-            weight: 400
-        ),
-        hint: (
-            size: 12,
-            weight: 400
-        )
+  body: (
+    primary: (
+      size: 16,
+      weight: 400
     ),
-    header: (
-        menuPrimary: (
-            size: 20,
-            weight: 600,
-            style: 'uppercase'
-        ),
-        menusecondary: (
-            size:  25,
-            weight: 400,
-            style: 'uppercase'
-        ),
-        nonMenuPrimary: (
-            size: 27,
-            weight: 600,
-            style: 'lowercase'
-        )
+    secondary: (
+      size: 14,
+      weight: 400
+    ),
+    hint: (
+      size: 12,
+      weight: 400
     )
+  ),
+  header: (
+    menuPrimary: (
+      size: 20,
+      weight: 600,
+      style: "uppercase"
+    ),
+    menusecondary: (
+      size: 25,
+      weight: 400,
+      style: "uppercase"
+    ),
+    nonMenuPrimary: (
+      size: 27,
+      weight: 600,
+      style: "lowercase"
+    )
+  )
 );
-
-
-
-

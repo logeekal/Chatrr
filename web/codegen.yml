@@ -1,0 +1,5 @@
+schema: http://localhost:3001/gql
+generates:
+  ./src/utils/gql/models/types.ts:
+    plugins:
+      - typescript

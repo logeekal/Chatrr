@@ -1,0 +1,35 @@
+.text-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 0px solid black;
+  padding: 5px;
+  position: relative;
+  box-shadow: 0.1px 0.2px 4px 1px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+
+  .text-input--label {
+    position: absolute;
+    font-weight: 700;
+  }
+  .movable {
+    top: 35%;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .text-input {
+    line-height: 1.5rem;
+    padding: 10px 5px 5px 5px;
+    font-size: 1.2rem;
+    margin-block-start: 15px;
+    background: transparent;
+    border: transparent;
+    outline: 0;
+    width: 100%;
+    &:focus {
+      + .text-input--label {
+        top: 5px;
+      }
+    }
+  }
+}

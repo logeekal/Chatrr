@@ -1,5 +1,5 @@
 @mixin dims($factor: 1) {
-  $number: 1/$factor;
+  $number: 1 / $factor;
   width: percentage($number: $number);
   height: 70px;
 }
@@ -37,7 +37,6 @@ $borderRadius: 10px;
     }
     .option1,
     .option2 {
-     
       display: flex;
       justify-content: center;
       align-items: center;

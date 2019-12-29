@@ -19,7 +19,7 @@ beforeEach(function() {
   props = {
     leftIcon: "day",
     rightIcon: "night",
-    onChange: () => {
+    onChange: (): void => {
       if (testValue === "day") {
         testValue = "night";
       } else {
