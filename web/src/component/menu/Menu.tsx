@@ -6,6 +6,7 @@ export interface Props {
     id: string;
     label: string;
     icon: string;
+    action?: () => void;
   }>;
 }
 
@@ -23,6 +24,10 @@ export default function Menu(props: Props): ReactElement {
    */
 
   const handleSelection: (id: string) => void = (id: string) => {
+    console.log(`Selecting ${id}`);
+    const [{ action }] = props.menu.filter(menu => menu.id === id);
+    console.log(action);
+    action && action();
     setCurrentMenuId(id);
   };
 

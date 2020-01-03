@@ -71,7 +71,7 @@ export type Mutation = {
    * personally and collaboratively."
    */
   addUserToRoom: GenericResponse;
-  /** sendConversation mutation helps system to send message from one entity to another entity, these entity can be  */
+  /** sendConversation mutation helps system to send message from one entity to another entity, these entity can be */
   sendConversation: GenericResponse;
   removeUserFromRoom: GenericResponse;
   updateConnectedStatus: GenericResponse;
@@ -102,6 +102,7 @@ export type MutationUpdateConnectedStatusArgs = {
 export type Query = {
   __typename?: "Query";
   userList?: Maybe<Array<Maybe<User>>>;
+  me?: Maybe<User>;
   user?: Maybe<User>;
   getUserConversations: ConversationTrail;
   roomUsers?: Maybe<Array<Maybe<User>>>;

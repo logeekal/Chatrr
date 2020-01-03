@@ -1,20 +1,28 @@
-@import './constants.scss';
-@import '../App.scss';
-@import '../screens/main/styles.scss';
-@import '../component/Layout/styles.scss';
-@import '../component/avatar/style.scss';
-@import '../component/menu-item/styles.scss';
-@import '../component/menu/styles.scss';
-@import '../component/toggle/style.scss';
-@import '../component/navigation-toggle/NavigationToggle.scss';
-@import '../screens/rooms/Rooms.scss';
+@import "./constants.scss";
+@import "../App.scss";
+@import "../screens/main/styles.scss";
+@import "../component/Layout/styles.scss";
+@import "../component/avatar/style.scss";
+@import "../component/menu-item/styles.scss";
+@import "../component/menu/styles.scss";
+@import "../component/toggle/style.scss";
+@import "../component/navigation-toggle/NavigationToggle.scss";
+@import "../screens/rooms/Rooms.scss";
+@import "../screens/login/Login.scss";
+@import "../component/text-field/TextField.scss";
+@import "../component/button/Button.scss";
+@import "../component/loader/Loader.scss";
 
-@mixin themify($theme-name){
-    @include app($theme-name, $allColors);
-    @include main($theme-name, $allColors);
-    @include avatar($theme-name, $allColors);
-    @include menu-item($theme-name, $allColors);
-    @include toggle($theme-name, $allColors);
-    @include nav-toggle($theme-name, $allColors);
-    @include rooms($theme-name, $allColors);
+@mixin themify($theme-name) {
+  @include app($theme-name, $allColors);
+  @include main($theme-name, $allColors);
+  @include avatar($theme-name, $allColors);
+  @include menu-item($theme-name, $allColors);
+  @include toggle($theme-name, $allColors);
+  @include nav-toggle($theme-name, $allColors);
+  @include rooms($theme-name, $allColors);
+  @include login($theme-name, $allColors);
+  @include text-field($theme-name, $allColors);
+  @include button($theme-name, $allColors);
+  @include loader($theme-name, $allColors);
 }

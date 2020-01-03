@@ -6,7 +6,8 @@ import { getStaticFilePath } from "./../../utils/utils";
 export interface ToggleProps {
   leftIcon?: string;
   rightIcon?: string;
-  onChange: () => void;
+  appearance?: "normal" | "small" | "x-small";
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Toggle(props: ToggleProps): ReactElement {
@@ -34,7 +35,11 @@ export default function Toggle(props: ToggleProps): ReactElement {
         data-testid="toggle"
         onChange={props.onChange}
       ></input>
-      <label htmlFor="toggle" className="tgl-btn" data-testid="toggle-action">
+      <label
+        htmlFor="toggle"
+        className={"tgl-btn " + props.appearance}
+        data-testid="toggle-action"
+      >
         {" "}
       </label>
       {props.rightIcon && (

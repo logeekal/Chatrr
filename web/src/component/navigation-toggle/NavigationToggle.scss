@@ -1,7 +1,18 @@
 @mixin dims($factor: 1) {
   $number: 1 / $factor;
-  width: percentage($number: $number);
-  height: 70px;
+
+  &.large {
+    height: 70px;
+    width: percentage($number: $number);
+  }
+  &.normal {
+    height: 50px;
+    width: percentage($number: $number);
+  }
+  &.small {
+    height: 30px;
+    width: percentage($number: $number);
+  }
 }
 
 $borderRadius: 10px;
@@ -25,6 +36,7 @@ $borderRadius: 10px;
   );
 
   .nav-toggle-container {
+    width: 50%;
     display: inline-flex;
     flex-direction: row;
     position: relative;

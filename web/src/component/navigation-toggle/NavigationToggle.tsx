@@ -3,6 +3,7 @@ import React, { ReactElement, SyntheticEvent, useState } from "react";
 interface Props {
   options: [string, string];
   optionClassNames?: Array<string>;
+  size: "large" | "normal" | "small";
   onChange: (e: Event) => void;
 }
 
@@ -22,7 +23,7 @@ export default function NavigationToggle(props: Props): ReactElement {
   return (
     <div className="nav-toggle-container">
       <input
-        id="option1"
+        id={"option1"}
         type="radio"
         className="radio"
         name="nav"
@@ -33,13 +34,15 @@ export default function NavigationToggle(props: Props): ReactElement {
         htmlFor="option1"
         className={
           "option1 " +
+          props.size +
+          " " +
           (props.optionClassNames && props.optionClassNames.join(" "))
         }
       >
         {props.options[0]}
       </label>
       <input
-        id="option2"
+        id={"option2"}
         type="radio"
         className="radio"
         name="nav"
@@ -50,12 +53,14 @@ export default function NavigationToggle(props: Props): ReactElement {
         htmlFor="option2"
         className={
           "option2 " +
+          props.size +
+          " " +
           (props.optionClassNames && props.optionClassNames.join(" "))
         }
       >
         {props.options[1]}
       </label>
-      <div className="selected"></div>
+      <div className={"selected " + props.size}></div>
     </div>
   );
 }
