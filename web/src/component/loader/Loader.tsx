@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
-interface Props {
+export interface LoaderProps {
   size: "large" | "normal" | "small";
 }
 
-export default function Loader(props: Props): ReactElement {
+export default function Loader(props: LoaderProps): ReactElement {
   return <div className={"lds-hourglass " + props.size}></div>;
 }

@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 
-interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   appearance: "primary" | "secondary";
   size: "normal" | "small";
   containerClass: string;
@@ -11,7 +12,7 @@ export default function Button({
   size,
   containerClass,
   ...props
-}: Props): ReactElement {
+}: ButtonProps): ReactElement {
   return (
     <div className={`button-container body-hint ${containerClass}`}>
       <button className={`button body-hint ${appearance} ${size}`} {...props}>

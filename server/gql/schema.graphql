@@ -1,156 +1,154 @@
-directive @auth(
-    requires: Role = ADMIN,
-) on OBJECT | FIELD_DEFINITION
+directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
 
 enum Role {
-    USER
-    ADMIN
+  USER
+  ADMIN
 }
 
 type Query {
-    userList: [User]  #####
-    user(userName: String!): User
-    getUserConversations: ConversationTrail!
-    # isloggedIn(userName: String!): Boolean
-    
-    roomUsers(roomId: ID!):[User]
-    roomConversations(roomId: ID!, from: String!):[Conversations]
-    rooms(roomId: ID): [Room]   
-    # room(name: String!): Room ###
-    # me: User ###   
+  userList: [User] #####
+  me: User
+  user(userName: String!): User
+  getUserConversations: ConversationTrail!
+  # isloggedIn(userName: String!): Boolean
+
+  roomUsers(roomId: ID!): [User]
+  roomConversations(roomId: ID!, from: String!): [Conversations]
+  rooms(roomId: ID): [Room]
+  # room(name: String!): Room ###
+  # me: User ###
 }
 
-
-type User @auth(requires: USER){
-    id: ID!
-    userName: String!
-    avatar: String!
-    gender: String!
-    ip: String @auth(requires: ADMIN)
-    location: String @auth(requires: ADMIN)
-    connected: Boolean!
-    loggedIn: Boolean!
-    createdAt: String!
-    updatedAt: String!
-    room: Room
-    recievedConversations: [Conversations]
-    sentConversations: [Conversations]
+type User @auth(requires: USER) {
+  id: ID!
+  userName: String!
+  avatar: String!
+  gender: String!
+  ip: String @auth(requires: ADMIN)
+  location: String @auth(requires: ADMIN)
+  connected: Boolean!
+  loggedIn: Boolean!
+  createdAt: String!
+  updatedAt: String!
+  room: Room
+  recievedConversations: [Conversations]
+  sentConversations: [Conversations]
 }
 
-
-type Conversations @auth(requires: USER){
-    id: ID!
-    from: String!
-    toUser: String
-    toRoom: String
-    toType: String!
-    text: String!
-    seen: Boolean
-    delievered: Boolean
-    sent: Boolean
-    createdAt: String!
+type Conversations @auth(requires: USER) {
+  id: ID!
+  from: String!
+  toUser: String
+  toRoom: String
+  toType: String!
+  text: String!
+  seen: Boolean
+  delievered: Boolean
+  sent: Boolean
+  createdAt: String!
 }
 
 "*****************************"
-
 enum RoomType {
-    STANDARD
-    CUSTOM
+  STANDARD
+  CUSTOM
 }
 
-""" Rooms are kind of groups where anyone can enter and chat each other \
- personally and collaboratively."""
-type Room @auth(requires: USER){
-    id: ID!
-    name: String!
-    title: String!
-    avatar: String!
-    description: String
-    active: Boolean
-    createdAt: String
-    updatedAt: String
-    users: [User]
-    roomConversations:  [Conversations]
+"""
+ Rooms are kind of groups where anyone can enter and chat each other \
+personally and collaboratively.
+"""
+type Room @auth(requires: USER) {
+  id: ID!
+  name: String!
+  title: String!
+  avatar: String!
+  description: String
+  active: Boolean
+  createdAt: String
+  updatedAt: String
+  users: [User]
+  roomConversations: [Conversations]
 }
-
-
 
 type Mutation {
-    # if false, someone with same userName is already loggedin
-    loginUser ( userName: String!,
-                avatar: String,
-                gender: String,
-                ip: String,
-                location: String
-                ): LoginResponse!
+  # if false, someone with same userName is already loggedin
+  loginUser(
+    userName: String!
+    avatar: String
+    gender: String
+    ip: String
+    location: String
+  ): LoginResponse!
 
-    """
-    Need to update the username to something else on Logout...
-    So that another user can login with same username.
-    """    
-    logoutUser: GenericResponse!
+  """
+  Need to update the username to something else on Logout...
+  So that another user can login with same username.
+  """
+  logoutUser: GenericResponse!
 
-    """
-    When a user first time joins a room. There is not way to exit all t
-    the rooms, rather, a person can do change the room.
-    
-    Rooms are kind of groups where anyone can enter and chat each other \
-    personally and collaboratively."
-    """
-    addUserToRoom (roomId: String!): GenericResponse! @auth(requires: USER)
+  """
+  When a user first time joins a room. There is not way to exit all t
+  the rooms, rather, a person can do change the room.
 
-    """
-    sendConversation mutation helps system to send message from one entity to another entity, these entity can be 
-    """
-    sendConversation(to: String!, toType: String!, text: String!) : GenericResponse! @auth(requires: USER)
+  Rooms are kind of groups where anyone can enter and chat each other \
+  personally and collaboratively."
+  """
+  addUserToRoom(roomId: String!): GenericResponse! @auth(requires: USER)
 
-    removeUserFromRoom: GenericResponse! @auth(requires: USER)
+  """
+  sendConversation mutation helps system to send message from one entity to another entity, these entity can be
+  """
+  sendConversation(
+    to: String!
+    toType: String!
+    text: String!
+  ): GenericResponse! @auth(requires: USER)
 
-    updateConnectedStatus(status: Boolean!) : GenericResponse!
+  removeUserFromRoom: GenericResponse! @auth(requires: USER)
+
+  updateConnectedStatus(status: Boolean!): GenericResponse!
 }
 
 type LoginResponse {
-    success: Boolean!
-    error: String
-    token: String!
+  success: Boolean!
+  error: String
+  token: String!
 }
 
 type GenericResponse {
-    success: Boolean
-    error: String
+  success: Boolean
+  error: String
 }
 
-
-type JoinRoomResponse{
-    success: Boolean!
-    error: String
-    room: Room
+type JoinRoomResponse {
+  success: Boolean!
+  error: String
+  room: Room
 }
 
 type ConversationTrail {
-    sentConversations: [Conversations],
-    receivedConversations: [Conversations]
+  sentConversations: [Conversations]
+  receivedConversations: [Conversations]
 }
 
 type UserName {
-    userName: String!
+  userName: String!
 }
 
-
 type Subscription {
-    """
-    newUserInRoom is subsriptions which notifies the client when a new user joins a Room
-    """
-    newUserJoinedRoom(roomId: String!) : User!
+  """
+  newUserInRoom is subsriptions which notifies the client when a new user joins a Room
+  """
+  newUserJoinedRoom(roomId: String!): User!
 
-    newUserLeftRoom(roomId: String!) : User!
+  newUserLeftRoom(roomId: String!): User!
 
-    newLogin: User!
+  newLogin: User!
 
-    newLogout: UserName!
+  newLogout: UserName!
 
-    newChatMessageToUser: Conversations!
+  newChatMessageToUser: Conversations!
 
-    newChatMessageToRoom(roomId: String!) : Conversations!
-
+  newChatMessageToRoom(roomId: String!): Conversations!
 }

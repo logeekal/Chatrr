@@ -7,11 +7,34 @@ import RoomList from "../../component/room-list/RoomList";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_ROOMS } from "../../utils/gql/queries";
 import { Room } from "../../utils/gql/models/types";
+import Loader from "../../component/loader/Loader";
+import { useContext } from "react";
+import { AppStateContext } from "./../../state/providers/AppStateProvider";
+import withLoader from "../../component/HOC/loader/LoaderHOC";
+import { RoomListProps } from "./../../component/room-list/RoomList";
 
 interface Props {}
 
 export default function Rooms({}: Props): ReactElement {
-  const { data, error, loading } = useQuery<{ rooms: Room[] }, {}>(GET_ROOMS);
+  const { state, actions } = useContext(AppStateContext);
+  const { data, error, loading } = useQuery<{ rooms: Room[] }, {}>(GET_ROOMS, {
+    fetchPolicy: "cache-first",
+    onCompleted: ({ rooms }) => {
+      actions.saveRooms(rooms);
+    }
+  });
+
+  const roomListLoadCondition = () => {
+    return Object.keys(state.allRooms).length > 0;
+  };
+
+  const RoomListWithLoader = withLoader<RoomListProps>(
+    RoomList,
+    roomListLoadCondition,
+    {
+      size: "large"
+    }
+  );
 
   console.log(data);
   return (
@@ -27,7 +50,8 @@ export default function Rooms({}: Props): ReactElement {
         />
       </Layout>
       <Layout className="room-container--content">
-        <RoomList roomList={data && data.rooms} />
+        <RoomListWithLoader roomList={Object.values(state.allRooms)} />
+        <div className="room-container--member-list"></div>
       </Layout>
     </Layout>
   );

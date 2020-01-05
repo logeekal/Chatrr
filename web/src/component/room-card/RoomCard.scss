@@ -1,0 +1,33 @@
+@mixin room-card($theme-name, $themes) {
+  $url: attr(data-img url);
+
+  .room-card-container {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    align-items: center;
+
+    cursor: pointer;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: var(--room-card-bg-image);
+      background-clip: border-box;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      filter: brightness(0.5) blur(1px);
+    }
+    .room-card-name {
+      position: relative;
+    }
+  }
+}

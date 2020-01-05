@@ -1,13 +1,30 @@
 import React, { ReactElement, useState } from "react";
-import TextField from "../text-field/TextField";
+
 import { Room } from "../../utils/gql/models/types";
+import RoomCard from "../room-card/RoomCard";
+import withLoader from "./../HOC/loader/LoaderHOC";
 
-interface Props {
-  roomList: Array<Room> | undefined;
+export interface RoomListProps {
+  roomList: Array<Room>;
 }
 
-export default function RoomList(props: Props): ReactElement {
-  const [value, setValue] = useState<string>("");
-
-  return <div></div>;
+export default function RoomList(props: RoomListProps): ReactElement {
+  return (
+    <div className="room-list-container">
+      {props.roomList.map(room => (
+        <RoomCard
+          id={room.id}
+          key={room.id}
+          name={room.title}
+          image={room.name}
+          textClass="header-menu-primary"
+          onSelect={(e: React.MouseEvent): void => {
+            console.log(`${room.name} selected`);
+          }}
+        />
+      ))}
+    </div>
+  );
 }
+
+// export default withLoader<RoomListProps>(RoomList, () => false);

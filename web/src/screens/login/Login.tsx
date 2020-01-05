@@ -12,6 +12,8 @@ import {
 import { LOGIN } from "../../utils/gql/queries";
 import Toggle from "../../component/toggle/Toggle";
 import NavigationToggle from "../../component/navigation-toggle/NavigationToggle";
+import { ButtonProps } from "./../../component/button/Button";
+import withLoader from "./../../component/HOC/loader/LoaderHOC";
 interface Props {
   onLogin: () => void;
 }
@@ -22,7 +24,7 @@ export default function Login(props: Props): ReactElement {
   const [gender, setGender] = useState<string>("f");
   const [loginError, setError] = useState<string>("");
 
-  const [loginResponse, { data, error }] = useMutation<
+  const [loginResponse, { data, error, loading }] = useMutation<
     { loginResponse: GenericResponse },
     { userName: string }
   >(LOGIN);
@@ -69,6 +71,17 @@ export default function Login(props: Props): ReactElement {
     }
   };
 
+  const ButtonWithLoader = withLoader<ButtonProps>(
+    Button,
+    () => {
+      console.log(`Loading is ${loading}`);
+      return !loading;
+    },
+    {
+      size: "normal"
+    }
+  );
+
   return (
     <div className="login-container">
       <div className="login-form-container">
@@ -103,14 +116,22 @@ export default function Login(props: Props): ReactElement {
           </div>
           <div className="login-form-element">
             {buttonType === "button" ? (
-              <Button
+              // <Button
+              //   containerClass=""
+              //   appearance={"primary"}
+              //   size="normal"
+              //   type="submit"
+              // >
+              //   Login
+              // </Button>
+              <ButtonWithLoader
+                appearance="primary"
                 containerClass=""
-                appearance={"primary"}
                 size="normal"
                 type="submit"
               >
                 Login
-              </Button>
+              </ButtonWithLoader>
             ) : (
               <Loader size="normal" />
             )}

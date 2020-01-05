@@ -12,6 +12,7 @@
 @import "../component/text-field/TextField.scss";
 @import "../component/button/Button.scss";
 @import "../component/loader/Loader.scss";
+@import "../component/room-card/RoomCard.scss";
 
 @mixin themify($theme-name) {
   @include app($theme-name, $allColors);
@@ -25,4 +26,5 @@
   @include text-field($theme-name, $allColors);
   @include button($theme-name, $allColors);
   @include loader($theme-name, $allColors);
+  @include room-card($theme-name, $allColors);
 }
