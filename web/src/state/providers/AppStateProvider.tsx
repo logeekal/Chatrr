@@ -1,18 +1,23 @@
 import React, { useReducer } from "react";
 import reducers from "./reducers";
 // import actions from '../actions';
-import { userActions, roomActions } from "./actions/index";
+import { userActions, roomActions, menuActions } from "./actions/index";
 import { User } from "../../utils/gql/models/types";
 import {
   UserStateType,
   ActionType,
   RoomStateType,
-  RoomActionListType
+  RoomActionListType,
+  MenuState,
+  MenuActionListType
 } from "../models";
 import { UserActionListType } from "./../models/index";
 
-interface StateInterface extends UserStateType, RoomStateType {}
-interface ActionsInterface extends UserActionListType, RoomActionListType {}
+interface StateInterface extends UserStateType, RoomStateType, MenuState {}
+interface ActionsInterface
+  extends UserActionListType,
+    RoomActionListType,
+    MenuActionListType {}
 
 interface AppStateContextInterface {
   state: StateInterface;
@@ -61,14 +66,6 @@ function AppStateProvider({ children }: ProviderProps): React.ReactElement {
     currentRoomId: ""
   });
 
-  //   const [miscState, miscDispatch] = useReducer(reducers.MISCReducer, {
-  //     misc: {
-  //       loading: {
-  //         state: false
-  //       }
-  //     }
-  //   });
-
   const [roomState, roomDispatch] = useReducer<
     React.Reducer<RoomStateType, ActionType>
   >(reducers.RoomReducer, {
@@ -76,15 +73,29 @@ function AppStateProvider({ children }: ProviderProps): React.ReactElement {
     allRooms: {}
   });
 
+  const [menuState, menuDispatch] = useReducer<
+    React.Reducer<MenuState, ActionType>
+  >(reducers.MenuReducer, {
+    context: {
+      component: "rooms",
+      selectedElement: ""
+    },
+    main: {
+      component: ""
+    }
+  });
+
   console.log(userActions(userDispatch));
   const actions = {
     ...userActions(userDispatch),
-    ...roomActions(roomDispatch)
+    ...roomActions(roomDispatch),
+    ...menuActions(menuDispatch)
   };
 
   const state = {
     ...userState,
-    ...roomState
+    ...roomState,
+    ...menuState
   };
 
   return (

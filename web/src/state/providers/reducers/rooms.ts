@@ -2,8 +2,13 @@
 /* eslint-disable no-case-declarations */
 
 import { ActionTypes } from "./../actions/types";
-import { RoomStateType, ActionType } from "../../models";
-import { Room } from "../../../utils/gql/models/types";
+import {
+  RoomStateType,
+  ActionType,
+  AddNewUserToRoomInterface,
+  RemoveUserFromRoomInterface
+} from "../../models";
+import { Room, User } from "../../../utils/gql/models/types";
 import { RoomListObjType } from "./../../models/index";
 import { Dispatch } from "react";
 import { SaveRoomsActionInterface } from "./../../models/index";
@@ -31,6 +36,45 @@ const RoomReducer = (
         allRooms,
         orderedRoomIds
       };
+    case ActionTypes.ADD_USER_TO_ROOM:
+      let {
+        payload: { roomId, user }
+      } = action as AddNewUserToRoomInterface;
+      console.log(`Adding ${user.userName} to ${roomId}`);
+      let currentRoomUsers = state.allRooms[roomId].users as Array<User>;
+      return {
+        ...state,
+        allRooms: {
+          ...state.allRooms,
+          [roomId]: {
+            ...state.allRooms[roomId],
+            users: [...currentRoomUsers, user]
+          } as Room
+        }
+      };
+    case ActionTypes.REMOVE_USER_FROM_ROOM:
+      const {
+        payload: removeUserPayLoad
+      } = action as RemoveUserFromRoomInterface;
+      roomId = removeUserPayLoad.roomId;
+      user = removeUserPayLoad.user;
+      console.log(`Removing ${user.userName} from ${roomId}`);
+      currentRoomUsers = state.allRooms[roomId].users as Array<User>;
+      const newUserList = currentRoomUsers.filter(
+        value => value.userName !== user.userName
+      );
+
+      return {
+        ...state,
+        allRooms: {
+          ...state.allRooms,
+          [roomId]: {
+            ...state.allRooms[roomId],
+            users: [...newUserList]
+          }
+        }
+      };
+
     default:
       throw new Error(
         `Error in RoomReducer state: ${JSON.stringify(

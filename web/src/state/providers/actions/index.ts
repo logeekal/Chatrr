@@ -2,15 +2,18 @@ import reducers from "../reducers";
 import { useReducer, useRef } from "react";
 import { ActionTypes } from "./types";
 import {
-  UserActionsType,
   LoginUserActionInterface,
   SaveRoomsActionInterface,
   JoinRoomActionInterface,
-  LogoutUserActionInterface
+  LogoutUserActionInterface,
+  MenuActionListType,
+  ActionTypeInterface,
+  ActionsContainerInterface,
+  RoomActionListType,
+  UserActionListType
 } from "../../models/index";
-import { RoomActionsType } from "./../../models/index";
 
-export const userActions: UserActionsType = dispatch => {
+export const userActions: ActionsContainerInterface<UserActionListType> = dispatch => {
   return {
     loginUser: (user): void => {
       console.log(`Adding loginUser ${JSON.stringify(user)}`);
@@ -37,14 +40,49 @@ export const userActions: UserActionsType = dispatch => {
   };
 };
 
-export const roomActions: RoomActionsType = dispatch => {
+export const roomActions: ActionsContainerInterface<RoomActionListType> = dispatch => {
   return {
-    saveRooms: roomsList => {
+    saveRooms: (roomsList): void => {
       console.log(`Got the rooms.. Now adding them in the state`);
       dispatch({
         type: ActionTypes.SAVE_ROOMS,
         payload: roomsList
       } as SaveRoomsActionInterface);
+    },
+    addUserToRoom: (user, roomId): void => {
+      dispatch({
+        type: ActionTypes.ADD_USER_TO_ROOM,
+        payload: {
+          roomId: roomId,
+          user: user
+        }
+      });
+    },
+    removeUserFromRoom: (user, roomId): void => {
+      dispatch({
+        type: ActionTypes.REMOVE_USER_FROM_ROOM,
+        payload: {
+          roomId: roomId,
+          user: user
+        }
+      });
+    }
+  };
+};
+
+export const menuActions: ActionsContainerInterface<MenuActionListType> = dispatch => {
+  return {
+    updateContextMenu: (menu): void => {
+      dispatch({
+        type: ActionTypes.UPDATE_CONTEXT_MENU,
+        payload: menu
+      } as ActionTypeInterface<string>);
+    },
+    updateMainMenu: (menu): void => {
+      dispatch({
+        type: ActionTypes.UPDATE_MAIN_MENU,
+        payload: menu
+      } as ActionTypeInterface<string>);
     }
   };
 };

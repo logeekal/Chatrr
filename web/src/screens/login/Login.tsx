@@ -14,6 +14,7 @@ import Toggle from "../../component/toggle/Toggle";
 import NavigationToggle from "../../component/navigation-toggle/NavigationToggle";
 import { ButtonProps } from "./../../component/button/Button";
 import withLoader from "./../../component/HOC/loader/LoaderHOC";
+import { ApolloError } from "apollo-boost";
 interface Props {
   onLogin: () => void;
 }
@@ -22,7 +23,12 @@ export default function Login(props: Props): ReactElement {
   const [username, setUserName] = useState("");
   const [buttonType, setButtontype] = useState("button");
   const [gender, setGender] = useState<string>("f");
-  const [loginError, setError] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
+
+  enum buttontypes {
+    BUTTON = "button",
+    LOADING = "loading"
+  }
 
   const [loginResponse, { data, error, loading }] = useMutation<
     { loginResponse: GenericResponse },
@@ -39,7 +45,7 @@ export default function Login(props: Props): ReactElement {
     const userNameValue = e.target.value;
     const { valid, error } = validateUserName(userNameValue);
     if (!valid) {
-      setError(error);
+      setLoginError(error);
     }
     setUserName(userNameValue.replace(" ", ""));
   };
@@ -47,15 +53,22 @@ export default function Login(props: Props): ReactElement {
   const handleSubmission: (
     e: React.FormEvent<HTMLFormElement>
   ) => void = async e => {
-    setButtontype("loading");
+    setButtontype(buttontypes.LOADING);
+    setLoginError("");
     e.preventDefault();
-    const result = await loginResponse({
-      variables: {
-        userName: username
+    let result;
+    try {
+      result = await loginResponse({
+        variables: {
+          userName: username
+        }
+      });
+    } catch (error) {
+      if ((error as ApolloError).message.includes("SOME_DB_ISSUE")) {
+        setLoginError("Username not available.");
+        setButtontype(buttontypes.BUTTON);
+        console.log(buttonType);
       }
-    });
-    if (error) {
-      console.log(error);
     }
     if (result) {
       props.onLogin();
@@ -63,7 +76,7 @@ export default function Login(props: Props): ReactElement {
     console.log(result);
   };
 
-  const handleGender: (e: Event) => void = e => {
+  const handleGender: (e: HTMLInputElement) => void = e => {
     if (gender === "f") {
       setGender("m");
     } else {
@@ -74,8 +87,8 @@ export default function Login(props: Props): ReactElement {
   const ButtonWithLoader = withLoader<ButtonProps>(
     Button,
     () => {
-      console.log(`Loading is ${loading}`);
-      return !loading;
+      console.log(`Loading is ${buttonType}`);
+      return buttonType === buttontypes.LOADING;
     },
     {
       size: "normal"
@@ -106,6 +119,7 @@ export default function Login(props: Props): ReactElement {
               id: "login-form--username"
             }}
           />
+          {loginError && <div className="login-form-error">{loginError}</div>}
           <div className="login-form-element">
             <NavigationToggle
               options={["Female", "Male"]}
@@ -116,14 +130,6 @@ export default function Login(props: Props): ReactElement {
           </div>
           <div className="login-form-element">
             {buttonType === "button" ? (
-              // <Button
-              //   containerClass=""
-              //   appearance={"primary"}
-              //   size="normal"
-              //   type="submit"
-              // >
-              //   Login
-              // </Button>
               <ButtonWithLoader
                 appearance="primary"
                 containerClass=""

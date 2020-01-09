@@ -20,24 +20,14 @@ export interface RoomStateType {
   allRooms: RoomListObjType;
 }
 
-export interface UserActionListType {
-  loginUser: (user: User) => void;
-  logoutUser: () => void;
-  joinRoom: (roomId: string) => void;
-}
+/*
+*****************************************************
 
-export interface UserActionsType {
-  (dispatch: React.Dispatch<ActionType>): UserActionListType;
-}
+Action Types
 
-export interface RoomActionListType {
-  saveRooms: (roomList: Array<Room>) => void;
-}
-export interface RoomActionsType {
-  (dispatch: React.Dispatch<ActionType>): RoomActionListType;
-}
+*****************************************************
 
-// Actions
+*/
 export interface ActionTypeInterface<T> {
   type: string;
   payload: T;
@@ -54,3 +44,57 @@ export interface JoinRoomActionInterface extends ActionTypeInterface<string> {}
 
 export interface SaveRoomsActionInterface
   extends ActionTypeInterface<Array<Room>> {}
+
+export interface AddNewUserToRoomInterface
+  extends ActionTypeInterface<{
+    roomId: string;
+    user: User;
+  }> {}
+
+export interface RemoveUserFromRoomInterface
+  extends ActionTypeInterface<{
+    roomId: string;
+    user: User;
+  }> {}
+
+export interface UserActionListType {
+  loginUser: (user: User) => void;
+  logoutUser: () => void;
+  joinRoom: (roomId: string) => void;
+}
+
+export interface RoomActionListType {
+  saveRooms: (roomList: Array<Room>) => void;
+  addUserToRoom: (user: User, roomId: string) => void;
+  removeUserFromRoom: (user: User, roomId: string) => void;
+}
+
+export interface MenuActionListType {
+  updateContextMenu: (menu: string) => void;
+  updateMainMenu: (menu: string) => void;
+}
+
+/**
+ * @typeparam T return type of Action Container. i.e Type defining
+ * list of actions.
+ */
+export interface ActionsContainerInterface<T> {
+  (dispatch: React.Dispatch<ActionType>): T;
+}
+
+/*
+*****************************************************
+
+Menu State Interface
+
+*****************************************************
+*/
+export interface MenuState {
+  context: {
+    component: string;
+    selectedElement: string;
+  };
+  main: {
+    component: string;
+  };
+}

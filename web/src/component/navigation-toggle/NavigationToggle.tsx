@@ -1,23 +1,30 @@
-import React, { ReactElement, SyntheticEvent, useState } from "react";
+import React, {
+  ReactElement,
+  SyntheticEvent,
+  useState,
+  ChangeEvent
+} from "react";
 
 interface Props {
   options: [string, string];
   optionClassNames?: Array<string>;
   size: "large" | "normal" | "small";
-  onChange: (e: Event) => void;
+  onChange: (e: HTMLInputElement) => void;
 }
 
 export default function NavigationToggle(props: Props): ReactElement {
   const [selected, setSelected] = useState(0);
 
-  const handleChange: (e: SyntheticEvent) => void = function(e) {
-    console.log(e);
+  const handleChange: (event: ChangeEvent<HTMLInputElement>) => void = function(
+    e
+  ) {
+    console.log(e.target);
     if (selected === 0) {
       setSelected(1);
     } else {
       setSelected(0);
     }
-    props.onChange(e.nativeEvent);
+    props.onChange(e.target);
   };
 
   return (
