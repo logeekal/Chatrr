@@ -67,6 +67,6 @@
     "node-fetch": "^2.6.0",
     "source-map-support": "^0.5.13",
     "ts-node-dev": "^1.0.0-pre.42",
-    "ws": "^7.1.2"
+    "ws": "^7.4.6"
   }
 }
